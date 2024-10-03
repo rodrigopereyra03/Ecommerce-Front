@@ -1,13 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import App from './App';
+import { ProductProvider } from './context/productContext';
+import './index.css';
 import './styles/styles.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  <ProductProvider>
     <App />
-  </React.StrictMode>
+    </ProductProvider>,
 );
 
