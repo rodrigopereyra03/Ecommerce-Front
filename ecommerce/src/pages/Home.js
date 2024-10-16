@@ -18,7 +18,6 @@ const Home = () => {
 
  // Función para cambiar de página
  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  
 
  return (
      <div className="container custom-card-container mb-4 ">

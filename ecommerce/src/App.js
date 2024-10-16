@@ -4,6 +4,9 @@ import Home from './pages/Home';
 import CartPage from './pages/CartPage';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import LoginForm from './components/loginForm';
+import RegisterForm from './components/RegisterForm';
+import ProductDetailPage from './pages/DetailProduct';
 
 const App = () => {
   return (
@@ -12,6 +15,9 @@ const App = () => {
           <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/cart" element={<CartPage />} />
+              <Route path="/login" element={<LoginForm />} />
+              <Route path="/register" element={<RegisterForm />} />
+              <Route path="/product/:id" element={<ProductDetailPage />} />
           </Routes>
           <Footer />
       </Router>
