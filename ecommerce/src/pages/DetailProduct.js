@@ -1,34 +1,38 @@
 import React, { useState,useEffect} from 'react';
+import { useParams,useNavigate  } from 'react-router-dom';
 import { useCart } from '../context/cartContext';
 const ProductDetailPage = () => {
     const { addToCart } = useCart(); // Obtener la función para agregar al carrito
+    const [product, setProduct] = useState(null); // Estado para el producto
     const [selectedImage, setSelectedImage] = useState(''); // Estado para la imagen seleccionada
     const [quantity, setQuantity] = useState(1); // Estado para la cantidad
-
-    const product = {
-        id: 1,
-        name: "Aire Acondicionado Inverter 3000W",
-        category: "Electrodomésticos",
-        description: "Un potente aire acondicionado de bajo consumo con tecnología inverter.",
-        price: 35000,
-        quantity: 15,
-        mainImage:"../product-1.jpeg",
-        images: [
-            "../product-1.jpeg",
-           "../product-2.jpeg",
-            "../product-2.jpeg",
-            "../product-1.jpeg"
-        ]
+    const { id } = useParams(); // Obtener el ID de la URL
+    const [loading, setLoading] = useState(true); // Estado de carga
+    const [showModal, setShowModal] = useState(false); 
+    const navigate = useNavigate();
+    // Función para obtener el producto desde el backend
+    const fetchProduct = async (productId) => {
+        try {
+            // Aquí haces la llamada al backend (puede ser fetch o axios)
+            const response = await fetch(`http://localhost:8080/api/product/${productId}`);
+            const data = await response.json();
+            setProduct(data); // Actualizar el estado con los datos del producto
+            setSelectedImage(data.mainImage); // Establecer la imagen principal
+            setLoading(false); // Cambiar el estado de carga
+        } catch (error) {
+            console.error('Error fetching product:', error);
+            setLoading(false); // Cambiar el estado de carga
+        }
     };
-
+  
     // Función para cambiar la imagen seleccionada
     const handleImageClick = (image) => {
         setSelectedImage(image);
     };
-       // Usar useEffect para establecer la imagen inicial
-       useEffect(() => {
-        setSelectedImage(product.mainImage);
-    }, [product.mainImage]);
+   // Ejecutar la función para obtener el producto cuando el componente se monte
+     useEffect(() => {
+      fetchProduct(id); // Llamar a la función con el ID del producto
+    }, [id]);     
 
     // Función para manejar el cambio de cantidad
     const handleQuantityChange = (event) => {
@@ -37,9 +41,31 @@ const ProductDetailPage = () => {
 
     const handleAddToCart = () => {
         addToCart(product, quantity); // Agregar el producto al carrito
-        console.log(`Agregando ${quantity} unidades de ${product.name} al carrito`);
+        setShowModal(true);
     };
-    
+
+    // Función para ir al carrito
+    const goToCart = () => {
+        setShowModal(false); // Cerrar el modal
+        navigate('/cart'); // Redirigir al carrito
+    };
+
+    // Función para volver a la página principal
+    const goToHome = () => {
+        setShowModal(false); // Cerrar el modal
+        navigate('/'); // Redirigir a la home
+    };
+
+
+    // Mientras los datos se están cargando
+    if (loading) {
+        return <div>Cargando...</div>;
+    }
+     // Si no se encuentra el producto
+     if (!product) {
+        return <div>Producto no encontrado.</div>;
+    }
+    const description = product.description.replace(/\\n/g, '\n');
     return (
         <div className="container mt-5 mb-5">
             <div className="row">
@@ -73,9 +99,9 @@ const ProductDetailPage = () => {
                 {/* Columna para los detalles del producto */}
                 <div className="col-md-6">
                     <h2>{product.name}</h2>
-                    <p className="text-muted">Categoría: {product.category}</p>
+                 {/*  <p className="text-muted">Categoría: {product.category}</p>*/}
 
-                    <p>{product.description}</p>
+                    <pre className="card-text font">{description}</pre>
                     
                     <div className="my-4">
                         {/* Mostrar el stock del producto */}
@@ -103,6 +129,28 @@ const ProductDetailPage = () => {
                     <button className="btn btn-success btn-lg w-100"  onClick={handleAddToCart} >Agregar al carrito</button>
                 </div>
             </div>
+ {/* Modal */}
+ {showModal && (
+                <div className="modal show fade d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+                    <div className="modal-dialog modal-dialog-centered" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Sumaste un producto al carrito</h5>
+                                <button type="button" className="close" style={{ position: 'absolute', right: '15px', top: '10px' }}  onClick={() => setShowModal(false)}>
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                <p>Has agregado {quantity} {quantity > 1 ? 'productos' : 'producto'} de {product.name} al carrito.</p>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-primary" onClick={goToCart}>Ir al carrito</button>
+                                <button type="button" className="btn btn-secondary" onClick={goToHome}>Seguir comprando</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
