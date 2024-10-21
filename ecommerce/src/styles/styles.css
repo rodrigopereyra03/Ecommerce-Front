@@ -1,3 +1,16 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* El contenedor ocupará toda la altura de la pantalla */
+}
+main {
+  flex-grow: 1; /* Esto hará que el contenido principal crezca y ocupe el espacio disponible */
+}
+
 body {
     font-family: 'Poppins', sans-serif !important;
     margin: 0;
@@ -51,7 +64,7 @@ nav a:hover {
 
 footer {
     text-align: center;
-    padding: 15px;
+    padding: 1rem;
     background-color: #007bff;
     color: white;
     position: relative;
@@ -206,4 +219,8 @@ footer {
 
 .custom-header {
   background-color: #4a90e2 !important; /* Azul personalizado */
+}
+
+.collapse {
+  transition: height 0.3s ease;
 }

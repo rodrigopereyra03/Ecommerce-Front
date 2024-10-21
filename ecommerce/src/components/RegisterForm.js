@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/authContext'; 
 const RegisterForm = () => {
+    const { login } = useAuth(); 
     const [formData, setFormData] = useState({
         name: '',
         lastName:'',
@@ -9,14 +11,12 @@ const RegisterForm = () => {
         password: '',
         confirmPassword: '',
         address: '',
-        city: '',
-        state: '',
-        zip: ''
+ 
     });
 
     const [error, setError] = useState('');
     const [step, setStep] = useState(1); // Controla el paso del formulario
-
+    const navigate = useNavigate();
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -24,7 +24,7 @@ const RegisterForm = () => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const { name,lastName,documentNumber, email, password, confirmPassword, address, city, state, zip } = formData;
 
@@ -44,13 +44,72 @@ const RegisterForm = () => {
             setStep(2); // Ir a la segunda parte del formulario
         } else if (step === 2) {
             // Validación para la segunda parte (dirección)
-            if (!address || !city || !state || !zip) {
+           /* if (!address || !city || !state || !zip) {
                 setError('Por favor, completa toda la información de la dirección.');
                 return;
-            }
+            }*/
 
             setError('');
 
+        // Enviar los datos al backend
+        try {
+            const response = await fetch('http://localhost:8080/api/auth/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name,
+                    lastName,
+                    documentNumber,
+                    email,
+                    password,
+                }),
+            });
+
+            if (!response.ok) {
+                // Manejo de errores en caso de respuesta no exitosa
+                const errorData = await response.json();
+                setError(errorData.message || 'Error en el registro');
+                return;
+            }
+            try{
+                const responseLogin = await fetch('http://localhost:8080/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password,
+                    }),
+                });
+
+                if (!responseLogin.ok) {
+                    // Manejo de errores en caso de respuesta no exitosa
+                    const errorData = await responseLogin.json();
+                    setError('Tuvimos un problema para iniciar sesion. Te redireccionaremos al login');
+                    return;
+                }
+                console.log(responseLogin.body)
+                login(responseLogin.body.jwt);
+
+                 // Redireccionar al home después del registro exitoso
+                 navigate('/');
+            }
+            catch(error) {
+                setError('Tuvimos un problema para iniciar sesion. Te redireccionaremos al login');
+              
+            }
+            
+    
+            // Aquí podrías redirigir al usuario o mostrar un mensaje de éxito
+        } catch (error) {
+            setError('Error al conectar con el servidor. Inténtalo nuevamente más tarde.');
+          
+        }
+
+     
             // Aquí manejarías el envío completo del formulario
             console.log('Datos completos del usuario:', formData);
         }
@@ -198,7 +257,7 @@ const RegisterForm = () => {
                                             />
                                         </div>
                                         <button type="submit" className="btn btn-success w-100">
-                                            Registrarse
+                                            Registrarme
                                         </button>
                                         <button 
                                             type="button" 
