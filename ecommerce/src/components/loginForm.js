@@ -42,7 +42,9 @@ const LoginForm = () => {
 
             // Acceder al atributo 'jwt' del body
             const jwt = data.jwt;
-            login(jwt); 
+            // Acceder al atributo 'userRole' del body
+            const userRole = data.userRole;
+            login(jwt, userRole); 
             // Redireccionar al home después del registro exitoso
             navigate('/');
         }

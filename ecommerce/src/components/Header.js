@@ -30,7 +30,7 @@ const Header = () => {
 
     // Verificar si el usuario está logueado
     const isLoggedIn = !!localStorage.getItem('token'); // Devuelve true si hay token, false si no
-
+    const userRole = localStorage.getItem('userRole'); // Devuelve el rol del usuario logeado
 
     const totalItems = (cart || []).reduce((total, item) => total + item.quantity, 0);
 
@@ -78,7 +78,12 @@ const Header = () => {
                                 <li className="nav-item border-bottom"> {/* Línea divisora */}
                                     <Link className="nav-link active" aria-current="page" to="/">Productos</Link>
                                 </li>
-
+                                {/* Mostrar el botón de órdenes solo si el usuario está logueado y es ADMIN */}
+                                {isLoggedIn && userRole === 'ADMIN' && (
+                                    <li className="nav-item border-bottom"> {/* Línea divisora */}
+                                        <Link className="nav-link active" aria-current="page" to="/orders">Órdenes</Link>
+                                    </li>
+                                )}
                                 <li className="nav-item position-relative border-bottom">
                                     <Link className="nav-link" to="/cart">
                                         {totalItems > 0 ? (
