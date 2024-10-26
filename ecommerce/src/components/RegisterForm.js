@@ -18,6 +18,7 @@ const RegisterForm = () => {
     const [step, setStep] = useState(1); // Controla el paso del formulario
     const navigate = useNavigate();
     const handleChange = (e) => {
+
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
