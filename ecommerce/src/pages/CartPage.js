@@ -59,7 +59,7 @@ const CartPage = () => {
                 price: item.price
             }));
 
-            const responseOrder = await fetch('http://localhost:8080/api/orders', {
+            const responseOrder = await fetch('http://vps-4482586-x.dattaweb.com:8080/api/orders', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ const CartPage = () => {
 
             try {
 
-                const responsePreference = await fetch('http://localhost:8080/api/mercadopago/create_preference', {
+                const responsePreference = await fetch('http://vps-4482586-x.dattaweb.com:8080/api/mercadopago/create_preference', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

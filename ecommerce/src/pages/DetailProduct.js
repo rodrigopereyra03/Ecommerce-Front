@@ -14,7 +14,7 @@ const ProductDetailPage = () => {
     const fetchProduct = async (productId) => {
         try {
             // Aquí haces la llamada al backend (puede ser fetch o axios)
-            const response = await fetch(`http://localhost:8080/api/product/${productId}`);
+            const response = await fetch(`http://vps-4482586-x.dattaweb.com:8080/api/product/${productId}`);
             const data = await response.json();
             setProduct(data); // Actualizar el estado con los datos del producto
             setSelectedImage(data.mainImage); // Establecer la imagen principal

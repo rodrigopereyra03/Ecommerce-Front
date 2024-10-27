@@ -19,7 +19,7 @@ const LoginForm = () => {
             return;
         }
         try {
-            const responseLogin = await fetch('http://localhost:8080/api/auth/login', {
+            const responseLogin = await fetch('http://vps-4482586-x.dattaweb.com:8080/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
