@@ -12,7 +12,7 @@ export const ProductProvider = ({ children }) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('http://backend:8080/api/product'); // Cambia por la URL de tu API
+                const response = await fetch('http://localhost:8080/api/product'); // Cambia por la URL de tu API
                 const data = await response.json();
                 console.log(data)
                 setProducts(data); // Almacena los productos traídos del backend
