@@ -7,7 +7,7 @@ import { useAuth } from '../context/authContext';
 
 const CartPage = () => {
     const { cart, setCart } = useCart(); // Obtener el carrito del contexto
-    const {token, setToken} = useAuth();
+    const { token, setToken } = useAuth();
     const [preferenceId, setPreferenceId] = useState();
     const [step, setStep] = useState(1); // Controla el paso actual
     const [formData, setFormData] = useState({
@@ -17,12 +17,6 @@ const CartPage = () => {
         city: '',
         state: '',
     });
-
-/*
-    useEffect(() => {
-        // Example: this effect runs only once when the component mounts
-        setPreferenceId("2049869592-35317d2f-a961-4b07-bf2c-e3fefbcd0529");
-    }, []);  // Empty array ensures this runs once*/
 
     const removeItem = (id) => {
         setCart(cart.filter(item => item.id !== id)); // Filtrar los productos que no tienen el id a eliminar
@@ -44,8 +38,6 @@ const CartPage = () => {
         setStep(2); // Avanzar al siguiente paso
     };
     const handleChange = (e) => {
-        console.log("onchangeee")
-        console.log(e.target.name)
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
@@ -62,16 +54,16 @@ const CartPage = () => {
             const products = cart.map(item => ({
                 id: item.id,
                 quantity: item.quantity,
-                name : item.name,
+                name: item.name,
                 description: item.description,
-                price: item.price    
+                price: item.price
             }));
 
             const responseOrder = await fetch('http://localhost:8080/api/orders', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer '+token,
+                    'Authorization': 'Bearer ' + token,
                 },
                 body: JSON.stringify({
                     address: {
@@ -81,19 +73,19 @@ const CartPage = () => {
                         city,
                         state
                     },
-                    products:products,
+                    products: products,
                     documentNumber: 40897248
 
                 }),
             });
 
-            try{
+            try {
 
                 const responsePreference = await fetch('http://localhost:8080/api/mercadopago/create_preference', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer '+token,
+                        'Authorization': 'Bearer ' + token,
                     },
                     body: JSON.stringify({
                         address: {
@@ -103,19 +95,16 @@ const CartPage = () => {
                             city,
                             state
                         },
-                        products:products,
+                        products: products,
                         documentNumber: 40897248
-    
+
                     }),
                 });
                 const responseText = await responsePreference.text();
-        
-                console.log(responseText);
-                setPreferenceId(responseText);
-                
 
-    
-            }catch(error){
+                setPreferenceId(responseText);
+
+            } catch (error) {
                 console.log(error)
             }
 
@@ -127,7 +116,9 @@ const CartPage = () => {
 
         setStep(3); // Avanzar al paso 3: pago
     };
-
+    const handleTransfers = () => {
+        setStep(4); // Avanzar al siguiente paso
+    };
     return (
         <div className="container-sm justify-content-center mb-3">
 
@@ -140,7 +131,7 @@ const CartPage = () => {
                         <p className="text-center">No hay productos en tu carrito.</p>
                     ) : (
                         <div className="row justify-content-center">
-                            <div className="col-6">
+                            <div className="col-12 col-md-6">
                                 {cart.map(item => (
                                     <CartItem item={item} key={item.id} onRemove={removeItem} />
                                 ))}
@@ -163,20 +154,20 @@ const CartPage = () => {
             {/* Step 2: Formulario de dirección de envío */}
             {step === 2 && (
 
-                <div className="address-form">
+                <div className="address-form px-3">
                     <h4 className="my-4 text-center">Decinos en donde queres recibir el pedido</h4>
                     <form className="d-flex justify-content-center">
                         <div className="col-12 col-md-6">
                             <div className="row mb-3">
                                 <label htmlFor="street" className="form-label col-12">Calle</label>
 
-                                <input type="text" className="form-control" id="street" name="street" value={formData.street} onChange={handleChange}   required />
+                                <input type="text" className="form-control" id="street" name="street" value={formData.street} onChange={handleChange} required />
 
                             </div>
                             <div className="row mb-3">
                                 <label htmlFor="number" className="form-label col-12">Número</label>
 
-                                <input type="number" className="form-control" id="number" name="number" required value={formData.number} onChange={handleChange}  />
+                                <input type="number" className="form-control" id="number" name="number" required value={formData.number} onChange={handleChange} />
 
                             </div>
                             <div className="row mb-3">
@@ -188,13 +179,13 @@ const CartPage = () => {
                             <div className="row mb-3">
                                 <label htmlFor="provincia" className="form-label col-12">Provincia</label>
 
-                                <input type="text" className="form-control" id="provincia" name="city"  required value={formData.city} onChange={handleChange}  />
+                                <input type="text" className="form-control" id="provincia" name="city" required value={formData.city} onChange={handleChange} />
 
                             </div>
                             <div className="row mb-3">
                                 <label htmlFor="localidad" className="form-label col-12">Localidad</label>
 
-                                <input type="text" className="form-control" id="localidad"  name="state" required value={formData.state} onChange={handleChange}  />
+                                <input type="text" className="form-control" id="localidad" name="state" required value={formData.state} onChange={handleChange} />
 
                             </div>
                             <div className="d-flex justify-content-between mt-4">
@@ -224,7 +215,7 @@ const CartPage = () => {
                                 <button
                                     type="button"
                                     className="btn btn-success  w-100"
-                                    onClick={() => {/* función para pagar con transferencia */ }}
+                                    onClick={() => setStep(4)}
                                 >
                                     Pagar con transferencia
                                 </button>
@@ -247,6 +238,44 @@ const CartPage = () => {
                                     type="button"
                                     className="btn btn-secondary"
                                     onClick={() => setStep(2)} // Volver al formulario de dirección
+                                >
+                                    Volver
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {step === 4 && (
+                <div className="row justify-content-center">
+                    <div className="col-12 col-md-8 col-lg-6">
+                        <h3 className="text-center mb-3">Nuestros datos bancarios</h3>
+                        <p>Total a pagar: ${totalAmount}</p>
+                        <p>ALIAS : tomas.tomas.tomas</p>
+                        <p>CBU : 43587969493745897</p>
+                        <p>Titular : Tomas agustin Pereyra</p>
+                        <p>Banco : BBVA</p>
+
+                        <div className="row mt-5 align-items-center">
+                            <div className="col-12">
+                                <button
+                                    type="button"
+                                    className="btn btn-success  w-100"
+                                    onClick={handleTransfers}
+                                >
+                                    Adjuntar comprobante
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Fila para el botón "Volver" */}
+                        <div className="row mt-3">
+                            <div className="col text-center">
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={() => setStep(3)} // Volver al formulario de dirección
                                 >
                                     Volver
                                 </button>

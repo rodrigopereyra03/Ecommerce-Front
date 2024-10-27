@@ -4,10 +4,11 @@ import { useProducts } from '../context/productContext';
 import { useCart } from '../context/cartContext';
 import { useAuth } from '../context/authContext';
 
-
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
     const { logout } = useAuth(); 
+    const navigate = useNavigate();
     const { setSearchTerm, setFilteredProducts, products, searchTerm } = useProducts(); // Obtener funciones del contexto
     const { cart } = useCart();
     const handleSearch = (event) => {
@@ -25,7 +26,8 @@ const Header = () => {
 
     const handleLogout = () => {
       
-        logout();  // Esto es opcional si usas AuthContext
+        logout();  
+        navigate('/');
     };
 
     // Verificar si el usuario está logueado
@@ -72,7 +74,7 @@ const Header = () => {
                             />
                         </div>
                     </div>
-                    <div className="col-4 ms-auto d-flex align-items-center">
+                    <div className="col-12 col-md-6 col-lg-4  ms-auto d-flex align-items-center">
                         <div className="collapse navbar-collapse" id="navbarNav">
                             <ul className="navbar-nav ms-auto">
                                 <li className="nav-item border-bottom"> {/* Línea divisora */}
