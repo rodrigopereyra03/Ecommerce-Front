@@ -7,6 +7,9 @@ import Footer from './components/Footer';
 import LoginForm from './components/loginForm';
 import RegisterForm from './components/RegisterForm';
 import ProductDetailPage from './pages/DetailProduct';
+import { initMercadoPago } from "@mercadopago/sdk-react";
+
+initMercadoPago("APP_USR-e2d33d78-50c6-4ad2-9a57-f8f0a59e7307", { locale: "es-AR" });
 
 const App = () => {
   return (
