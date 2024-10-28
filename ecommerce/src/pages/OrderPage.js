@@ -53,7 +53,7 @@ const dateFilteredOrders = filteredOrders.filter(order => {
                         }}
                         style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
                     >
-                        <option value="ALL">Todos</option>
+                        <option value="ALL">TODOS</option>
                         <option value="CREATED">CREADO</option>
                         <option value="PAID">PAGADO</option>
                         <option value="FINISHED">FINALIZADO</option>
