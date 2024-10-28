@@ -8,19 +8,22 @@ import LoginForm from './components/loginForm';
 import RegisterForm from './components/RegisterForm';
 import ProductDetailPage from './pages/DetailProduct';
 import OrderPage from './pages/OrderPage';
+import { OrderProvider } from './context/orderContext';
 
 const App = () => {
   return (
       <Router>
           <Header />
-          <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/login" element={<LoginForm />} />
-              <Route path="/register" element={<RegisterForm />} />
-              <Route path="/product/:id" element={<ProductDetailPage />} />
-              <Route path="/orders" element={<OrderPage />} />
-          </Routes>
+          <OrderProvider>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/login" element={<LoginForm />} />
+                <Route path="/register" element={<RegisterForm />} />
+                <Route path="/product/:id" element={<ProductDetailPage />} />
+                <Route path="/orders" element={<OrderPage />} />
+            </Routes>
+          </OrderProvider>
           <Footer />
       </Router>
 

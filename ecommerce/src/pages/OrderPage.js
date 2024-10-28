@@ -1,131 +1,145 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState, useContext } from 'react';
+import { OrderContext } from '../context/orderContext';
 
 const OrderPage = () => {
-    const [orders, setOrders] = useState([]);
-    const [statusUpdates, setStatusUpdates] = useState({}); // Para almacenar los nuevos estados
-
+    const { orders, handleStatusChange, updateOrderStatus } = useContext(OrderContext);
+    
     // Paginación
-    const itemsPerPage = 8; // Número de órdenes por página
+    const itemsPerPage = 8; 
     const [currentPage, setCurrentPage] = useState(1);
+    const [selectedStatus, setSelectedStatus] = useState('ALL');
+    const [startDate, setStartDate] = useState(''); // Fecha de inicio
+    const [endDate, setEndDate] = useState(''); // Fecha de fin
     const totalPages = Math.ceil(orders.length / itemsPerPage);
 
-    useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:8080/api/orders', {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                setOrders(response.data);
-            } catch (error) {
-                console.error('Error al obtener las órdenes:', error);
-            }
-        };
+    // Filtrar ordenes por estado
+    const filteredOrders = selectedStatus === 'ALL' ? orders : orders.filter(order => order.status === selectedStatus);
 
-        fetchOrders();
-    }, []);
+    // Filtrar por fechas
+const dateFilteredOrders = filteredOrders.filter(order => {
+    const orderDate = new Date(order.dateCreated);
+    const start = new Date(startDate);
+    const end = new Date(endDate);
 
-    const handleStatusChange = (orderId, newStatus) => {
-        setStatusUpdates((prev) => ({
-            ...prev,
-            [orderId]: newStatus,
-        }));
-    };
+    // Comprobar si el orden cae dentro del rango de fechas (inclusivo)
+    const isAfterStart = !startDate || orderDate >= start;
+    const isBeforeEnd = !endDate || orderDate <= end;
 
-    const updateOrderStatus = async (orderId) => {
-        try {
-            const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:8080/api/orders/${orderId}/status`, null, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                params: {
-                    status: statusUpdates[orderId], // Solo el nuevo estado de la orden específica
-                },
-            });
+    return isAfterStart && isBeforeEnd;
+});
 
-            // Actualiza las órdenes después de la actualización
-            const updatedOrders = orders.map((order) => {
-                if (order.id === orderId) {
-                    return {
-                        ...order,
-                        status: statusUpdates[orderId], // Actualiza el estado localmente
-                    };
-                }
-                return order;
-            });
-            setOrders(updatedOrders);
 
-            // Muestra la alerta de éxito
-            alert('Estado actualizado');
-        } catch (error) {
-            console.error('Error al actualizar el estado de la orden:', error);
-        }
-    };
-
-    // Obtener las órdenes de la página actual
+    // Obtener las ordenes de la página actual
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentOrders = orders.slice(indexOfFirstItem, indexOfLastItem);
+    const currentOrders = dateFilteredOrders.slice(indexOfFirstItem, indexOfLastItem);
 
     // Función para cambiar de página
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', height: '100vh' }}>
-            <div style={{ width: '80%', overflowX: 'auto' }}>
-                <h1 style={{ textAlign: 'center' }}>Órdenes</h1>
+        <div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh' }}>
+            <div style={{ width: '80%', padding: '20px', overflowX: 'auto' }}>
+                <h1 style={{ textAlign: 'center', color: '#333' }}>Ordenes</h1>
+                {/* Filtro por estado */}
+                <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+                    <label htmlFor="statusFilter" style={{ marginRight: '10px', fontWeight: 'bold' }}>Filtrar por estado:</label>
+                    <select 
+                        id="statusFilter" 
+                        value={selectedStatus} 
+                        onChange={(e) => {
+                            setSelectedStatus(e.target.value);
+                            setCurrentPage(1); // Reiniciar a la primera página al filtrar
+                        }}
+                        style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                    >
+                        <option value="ALL">Todos</option>
+                        <option value="CREATED">CREADO</option>
+                        <option value="PAID">PAGADO</option>
+                        <option value="FINISHED">FINALIZADO</option>
+                    </select>
+                </div>
+
+                {/* Filtro por fechas */}
+                <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+                    <label htmlFor="startDate" style={{ marginRight: '10px', fontWeight: 'bold' }}>Fecha de inicio:</label>
+                    <input 
+                        type="date" 
+                        id="startDate" 
+                        value={startDate} 
+                        onChange={(e) => {
+                            setStartDate(e.target.value);
+                            setCurrentPage(1); // Reiniciar a la primera página al filtrar
+                        }}
+                        style={{ marginRight: '20px', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                    />
+                    <label htmlFor="endDate" style={{ marginRight: '10px', fontWeight: 'bold' }}>Fecha de fin:</label>
+                    <input 
+                        type="date" 
+                        id="endDate" 
+                        value={endDate} 
+                        onChange={(e) => {
+                            setEndDate(e.target.value);
+                            setCurrentPage(1); // Reiniciar a la primera página al filtrar
+                        }}
+                        style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                    />
+                </div>
+
                 {currentOrders.length > 0 ? (
-                    <table style={{ margin: '0 auto', borderCollapse: 'collapse', width: '100%' }}>
-                        <thead>
+                    <table style={{ margin: '0 auto', borderCollapse: 'collapse', width: '100%', borderRadius: '8px', overflow: 'hidden' }}>
+                        <thead style={{ backgroundColor: '#007bff', color: '#fff' }}>
                             <tr>
-                                <th style={{ border: '1px solid black', padding: '8px' }}>ID</th>
-                                <th style={{ border: '1px solid black', padding: '8px' }}>FECHA</th>
-                                <th style={{ border: '1px solid black', padding: '8px' }}>PRODUCTOS</th>
-                                <th style={{ border: '1px solid black', padding: '8px' }}>DIRECCIÓN</th>
-                                <th style={{ border: '1px solid black', padding: '8px' }}>TOTAL</th>
-                                <th style={{ border: '1px solid black', padding: '8px' }}>ESTADO</th>
-                                <th style={{ border: '1px solid black', padding: '8px' }}>ACCIONES</th>
+                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>ID</th>
+                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>FECHA</th>
+                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>PRODUCTOS</th>
+                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>DIRECCIÓN</th>
+                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>TOTAL</th>
+                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>ESTADO</th>
+                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>ACCIONES</th>
                             </tr>
                         </thead>
                         <tbody>
                             {currentOrders.map(order => (
-                                <tr key={order.id}>
-                                    <td style={{ border: '1px solid black', padding: '8px' }}>{order.id}</td>
-                                    <td style={{ border: '1px solid black', padding: '8px' }}>{new Date(order.dateCreated).toLocaleDateString()}</td>
-                                    <td style={{ border: '1px solid black', padding: '8px' }}>
+                                <tr key={order.id} style={{ backgroundColor: '#f9f9f9', transition: 'background-color 0.3s' }}>
+                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>{order.id}</td>
+                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>{new Date(order.dateCreated).toLocaleDateString()}</td>
+                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
                                         {order.products.map(product => (
                                             <div key={product.id}>
                                                 {product.name} (x{product.quantity})
                                             </div>
                                         ))}
                                     </td>
-                                    <td style={{ border: '1px solid black', padding: '8px' }}>
+                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
                                         {order.address.street} {order.address.number}, {order.address.city}, {order.address.state}
                                     </td>
-                                    <td style={{ border: '1px solid black', padding: '8px' }}>${order.amount}</td>
-                                    <td style={{ border: '1px solid black', padding: '8px' }}>
+                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>${order.amount}</td>
+                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
                                         <select 
-                                            value={statusUpdates[order.id] || order.status} 
+                                            value={order.status} 
                                             onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                                            style={{ padding: '5px', borderRadius: '4px', border: '1px solid #ccc', textAlign: 'center' }}
                                         >
                                             <option value="CREATED">CREADO</option>
                                             <option value="PAID">PAGADO</option>
                                             <option value="FINISHED">FINALIZADO</option>
                                         </select>
                                     </td>
-                                    <td style={{ border: '1px solid black', padding: '8px' }}>
-                                        <button onClick={() => updateOrderStatus(order.id)}>Actualizar Estado</button>
+                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
+                                        <button 
+                                            onClick={() => updateOrderStatus(order.id)}
+                                            style={{ backgroundColor: '#198754', color: '#fff', border: 'none', borderRadius: '4px', padding: '8px 12px', cursor: 'pointer' }}
+                                        >
+                                            Actualizar Estado
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 ) : (
-                    <p>No hay órdenes disponibles</p>
+                    <p style={{ textAlign: 'center', color: '#555' }}>No hay ordenes disponibles</p>
                 )}
                 {/* Paginación */}
                 <nav className="mt-4">
@@ -136,7 +150,7 @@ const OrderPage = () => {
                             </button>
                         </li>
                         {[...Array(totalPages)].map((_, i) => (
-                            <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
+                            <li key={i + 1} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
                                 <button className="page-link" onClick={() => paginate(i + 1)}>
                                     {i + 1}
                                 </button>
