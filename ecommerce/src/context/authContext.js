@@ -17,15 +17,17 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     // Función para hacer login (guardar token en context y localStorage)
-    const login = (userToken) => {
+    const login = (userToken, userRole) => {
         setToken(userToken);
         localStorage.setItem('token', userToken); // Guardar en localStorage para persistencia
+        localStorage.setItem('userRole', userRole); // Guardar el rol en localStorage
     };
 
     // Función para hacer logout (eliminar token del context y localStorage)
     const logout = () => {
         setToken(null);
         localStorage.removeItem('token');
+        localStorage.removeItem('userRole'); // Eliminar rol del localStorage
     };
 
     return (
