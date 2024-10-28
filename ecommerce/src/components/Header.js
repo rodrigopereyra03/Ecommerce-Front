@@ -78,8 +78,8 @@ const Header = () => {
                                 />
                             </div>
                         </div>
-                    </div>
-                    <div className="col-12 col-md-6 col-lg-4  ms-auto d-flex align-items-center">
+                    )}
+                    <div className="col-12 col-md-6 col-lg-4 ms-auto d-flex align-items-center">
                         <div className="collapse navbar-collapse" id="navbarNav">
                             <ul className="navbar-nav ms-auto">
                                 <li className="nav-item border-bottom"> {/* Línea divisora */}
