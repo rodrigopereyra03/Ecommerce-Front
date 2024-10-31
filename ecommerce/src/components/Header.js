@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useProducts } from '../context/productContext';
 import { useCart } from '../context/cartContext';
 import { useAuth } from '../context/authContext';
@@ -7,6 +7,9 @@ import { useAuth } from '../context/authContext';
 import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
+
+    const location = useLocation();
+
     const { logout } = useAuth(); 
     const navigate = useNavigate();
     const { setSearchTerm, setFilteredProducts, products, searchTerm } = useProducts(); // Obtener funciones del contexto
@@ -32,7 +35,7 @@ const Header = () => {
 
     // Verificar si el usuario está logueado
     const isLoggedIn = !!localStorage.getItem('token'); // Devuelve true si hay token, false si no
-
+    const userRole = localStorage.getItem('userRole'); // Devuelve el rol del usuario logeado
 
     const totalItems = (cart || []).reduce((total, item) => total + item.quantity, 0);
 
@@ -63,24 +66,31 @@ const Header = () => {
                             <span className="navbar-toggler-icon"></span>
                         </button>
                     </div>
-                    <div className="col-12 col-md-6 col-lg-4 mx-auto d-flex align-items-center">
-                        <div className="w-100"> {/* Centro horizontalmente */}
-                            <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Buscar productos..."
-                                value={searchTerm}
-                                onChange={handleSearch}
-                            />
+                    {location.pathname === '/' && (
+                        <div className="col-12 col-md-6 col-lg-4 mx-auto d-flex align-items-center">
+                            <div className="w-100">
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Buscar productos..."
+                                    value={searchTerm}
+                                    onChange={handleSearch}
+                                />
+                            </div>
                         </div>
-                    </div>
-                    <div className="col-12 col-md-6 col-lg-4  ms-auto d-flex align-items-center">
+                    )}
+                    <div className="col-12 col-md-6 col-lg-4 ms-auto d-flex align-items-center">
                         <div className="collapse navbar-collapse" id="navbarNav">
                             <ul className="navbar-nav ms-auto">
                                 <li className="nav-item border-bottom"> {/* Línea divisora */}
                                     <Link className="nav-link active" aria-current="page" to="/">Productos</Link>
                                 </li>
-
+                                {/* Mostrar el botón de ordenes solo si el usuario está logueado y es ADMIN */}
+                                {isLoggedIn && userRole === 'ADMIN' && (
+                                    <li className="nav-item border-bottom"> {/* Línea divisora */}
+                                        <Link className="nav-link active" aria-current="page" to="/orders">Ordenes</Link>
+                                    </li>
+                                )}
                                 <li className="nav-item position-relative border-bottom">
                                     <Link className="nav-link" to="/cart">
                                         {totalItems > 0 ? (

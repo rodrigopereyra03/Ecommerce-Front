@@ -3,6 +3,8 @@ import { useAuth } from '../context/authContext'; // Importar el hook de autenti
 
 import { useNavigate } from 'react-router-dom';
 
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
 const LoginForm = () => {
     const { login } = useAuth(); // Obtener la función login del contexto
     const navigate = useNavigate();
@@ -19,7 +21,8 @@ const LoginForm = () => {
             return;
         }
         try {
-            const responseLogin = await fetch('http://localhost:8080/api/auth/login', {
+           
+            const responseLogin = await fetch(`${backendUrl}/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -42,7 +45,9 @@ const LoginForm = () => {
 
             // Acceder al atributo 'jwt' del body
             const jwt = data.jwt;
-            login(jwt); 
+            // Acceder al atributo 'userRole' del body
+            const userRole = data.userRole;
+            login(jwt, userRole); 
             // Redireccionar al home después del registro exitoso
             navigate('/');
         }
