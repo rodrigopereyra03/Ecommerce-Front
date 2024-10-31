@@ -1,6 +1,7 @@
 import React, { useState,useEffect} from 'react';
 import { useParams,useNavigate  } from 'react-router-dom';
 import { useCart } from '../context/cartContext';
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const ProductDetailPage = () => {
     const { addToCart } = useCart(); // Obtener la función para agregar al carrito
     const [product, setProduct] = useState(null); // Estado para el producto
@@ -13,8 +14,7 @@ const ProductDetailPage = () => {
     // Función para obtener el producto desde el backend
     const fetchProduct = async (productId) => {
         try {
-            // Aquí haces la llamada al backend (puede ser fetch o axios)
-            const response = await fetch(`http://vps-4482586-x.dattaweb.com:8080/api/product/${productId}`);
+            const response = await fetch(`${backendUrl}/api/product/${productId}`);
             const data = await response.json();
             setProduct(data); // Actualizar el estado con los datos del producto
             setSelectedImage(data.mainImage); // Establecer la imagen principal

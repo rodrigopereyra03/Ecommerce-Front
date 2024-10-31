@@ -4,7 +4,7 @@ import CartItem from '../components/CartItem';
 import { useCart } from '../context/cartContext'; // Asumiendo que el contexto está implementado
 import { Wallet } from "@mercadopago/sdk-react";
 import { useAuth } from '../context/authContext';
-
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const CartPage = () => {
     const { cart, setCart } = useCart(); // Obtener el carrito del contexto
     const { token, setToken } = useAuth();
@@ -58,8 +58,7 @@ const CartPage = () => {
                 description: item.description,
                 price: item.price
             }));
-
-            const responseOrder = await fetch('http://vps-4482586-x.dattaweb.com:8080/api/orders', {
+            const responseOrder = await fetch(`${backendUrl}/api/orders`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -80,8 +79,7 @@ const CartPage = () => {
             });
 
             try {
-
-                const responsePreference = await fetch('http://vps-4482586-x.dattaweb.com:8080/api/mercadopago/create_preference', {
+                const responsePreference = await fetch(`${backendUrl}/api/mercadopago/create_preference`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

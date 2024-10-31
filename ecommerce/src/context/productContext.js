@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const ProductContext = createContext();
 
 export const ProductProvider = ({ children }) => {
@@ -12,7 +12,7 @@ export const ProductProvider = ({ children }) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('http://vps-4482586-x.dattaweb.com:8080/api/product'); // Cambia por la URL de tu API
+                const response = await fetch(`${backendUrl}/api/product`); // Cambia por la URL de tu API
                 const data = await response.json();
                 console.log(data)
                 setProducts(data); // Almacena los productos traídos del backend
