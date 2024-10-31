@@ -1,7 +1,7 @@
 // OrderContext.js
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
-
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 export const OrderContext = createContext();
 
 export const OrderProvider = ({ children }) => {
@@ -12,7 +12,7 @@ export const OrderProvider = ({ children }) => {
     const fetchOrders = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8080/api/orders', {
+            const response = await axios.get(`${backendUrl}/api/orders`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -44,7 +44,7 @@ export const OrderProvider = ({ children }) => {
     const updateOrderStatus = async (orderId) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:8080/api/orders/${orderId}/status`, null, {
+            await axios.put(`${backendUrl}/api/orders/${orderId}/status`, null, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
