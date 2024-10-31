@@ -83,13 +83,18 @@ const Header = () => {
                         <div className="collapse navbar-collapse" id="navbarNav">
                             <ul className="navbar-nav ms-auto">
                                 <li className="nav-item border-bottom"> {/* Línea divisora */}
-                                    <Link className="nav-link active" aria-current="page" to="/">Productos</Link>
+                                    <Link className="nav-link active" aria-current="page" to="/">Home</Link>
                                 </li>
                                 {/* Mostrar el botón de ordenes solo si el usuario está logueado y es ADMIN */}
                                 {isLoggedIn && userRole === 'ADMIN' && (
                                     <li className="nav-item border-bottom"> {/* Línea divisora */}
                                         <Link className="nav-link active" aria-current="page" to="/orders">Ordenes</Link>
                                     </li>
+                                )}
+                                {isLoggedIn && userRole === 'ADMIN' && (
+                                    <li className="nav-item border-bottom">
+                                        <Link className="nav-link active" aria-current="page" to="/products">Productos</Link>
+                                     </li>
                                 )}
                                 <li className="nav-item position-relative border-bottom">
                                     <Link className="nav-link" to="/cart">

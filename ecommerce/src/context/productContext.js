@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
 const ProductContext = createContext();
 
@@ -7,6 +8,8 @@ export const ProductProvider = ({ children }) => {
     const [products,setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [loading, setLoading] = useState(false); // Para manejar el estado de carga
+    const [error, setError] = useState(null); // Para manejar errores
 
     // useEffect para traer los productos del backend cuando el componente se monta
     useEffect(() => {
@@ -37,6 +40,54 @@ export const ProductProvider = ({ children }) => {
         setFilteredProducts(filtered);
     }
 }, [searchTerm, products]);
+
+ // Función para obtener un producto por su ID
+ const getProductById = async (id) => {
+    setLoading(true);
+    setError(null);
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`http://localhost:8080/api/product/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return response.data; // Retorna el producto encontrado
+    } catch (error) {
+        console.error('Error fetching product:', error);
+        setError('Error al cargar el producto.');
+    } finally {
+        setLoading(false);
+    }
+};
+
+// Función para actualizar un producto
+const updateProduct = async (productDto) => {
+    setLoading(true);
+    setError(null);
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.put('http://localhost:8080/api/product', productDto, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        // Actualiza el producto en el estado
+        setProducts(prevProducts => 
+            prevProducts.map(product => 
+                product.id === response.data.id ? response.data : product
+            )
+        ); 
+        return response.data; // Retorna el producto actualizado
+    } catch (error) {
+        console.error('Error updating product:', error);
+        setError('Error al actualizar el producto.');
+    } finally {
+        setLoading(false);
+    }
+};
+
     return (
         <ProductContext.Provider value={{
             products,
@@ -44,7 +95,11 @@ export const ProductProvider = ({ children }) => {
             filteredProducts,
             setFilteredProducts,
             searchTerm,
-            setSearchTerm
+            setSearchTerm,
+            loading,
+            error,
+            getProductById,
+            updateProduct
         }}>
             {children}
         </ProductContext.Provider>
