@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
-
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const RegisterForm = () => {
     const { login } = useAuth();
     const [formData, setFormData] = useState({
@@ -67,7 +67,7 @@ const RegisterForm = () => {
 
             // Enviar los datos al backend
             try {
-                const response = await fetch('http://localhost:8080/api/auth/signup', {
+                const response = await fetch(`${backendUrl}/api/auth/signup`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -88,7 +88,7 @@ const RegisterForm = () => {
                     return;
                 }
                 try {
-                    const responseLogin = await fetch('http://localhost:8080/api/auth/login', {
+                    const responseLogin = await fetch(`${backendUrl}/api/auth/login`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
