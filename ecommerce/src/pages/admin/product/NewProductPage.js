@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { useProducts } from '../../../context/productContext';
+import { useNavigate } from 'react-router-dom';
 
 const NewProductPage = () => {
+
+    const navigate = useNavigate();
+
     const { createProduct, loading, error } = useProducts();
     const [productData, setProductData] = useState({
         name: '',
@@ -31,6 +35,7 @@ const NewProductPage = () => {
                 quantity: '',
                 mainImage: ''
             });
+            navigate('/products');
         } catch (err) {
             console.error('Error al crear el producto:', err);
         }
