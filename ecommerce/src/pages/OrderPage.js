@@ -16,18 +16,17 @@ const OrderPage = () => {
     const filteredOrders = selectedStatus === 'ALL' ? orders : orders.filter(order => order.status === selectedStatus);
 
     // Filtrar por fechas
-const dateFilteredOrders = filteredOrders.filter(order => {
-    const orderDate = new Date(order.dateCreated);
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const dateFilteredOrders = filteredOrders.filter(order => {
+        const orderDate = new Date(order.dateCreated);
+        const start = new Date(startDate);
+        const end = new Date(endDate);
 
-    // Comprobar si el orden cae dentro del rango de fechas (inclusivo)
-    const isAfterStart = !startDate || orderDate >= start;
-    const isBeforeEnd = !endDate || orderDate <= end;
+        // Comprobar si el orden cae dentro del rango de fechas (inclusivo)
+        const isAfterStart = !startDate || orderDate >= start;
+        const isBeforeEnd = !endDate || orderDate <= end;
 
-    return isAfterStart && isBeforeEnd;
-});
-
+        return isAfterStart && isBeforeEnd;
+    });
 
     // Obtener las ordenes de la página actual
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -41,49 +40,52 @@ const dateFilteredOrders = filteredOrders.filter(order => {
         <div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh' }}>
             <div style={{ width: '80%', padding: '20px', overflowX: 'auto' }}>
                 <h1 style={{ textAlign: 'center', color: '#333' }}>Ordenes</h1>
-                {/* Filtro por estado */}
-                <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-                    <label htmlFor="statusFilter" style={{ marginRight: '10px', fontWeight: 'bold' }}>Filtrar por estado:</label>
-                    <select 
-                        id="statusFilter" 
-                        value={selectedStatus} 
-                        onChange={(e) => {
-                            setSelectedStatus(e.target.value);
-                            setCurrentPage(1); // Reiniciar a la primera página al filtrar
-                        }}
-                        style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-                    >
-                        <option value="ALL">TODOS</option>
-                        <option value="CREATED">CREADO</option>
-                        <option value="PAID">PAGADO</option>
-                        <option value="FINISHED">FINALIZADO</option>
-                    </select>
-                </div>
+                {/* Contenedor para filtros */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                    {/* Filtro por estado */}
+                    <div style={{ textAlign: 'left' }}>
+                        <label htmlFor="statusFilter" style={{ marginRight: '10px', fontWeight: 'bold' }}>Filtrar por estado:</label>
+                        <select 
+                            id="statusFilter" 
+                            value={selectedStatus} 
+                            onChange={(e) => {
+                                setSelectedStatus(e.target.value);
+                                setCurrentPage(1); // Reiniciar a la primera página al filtrar
+                            }}
+                            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                        >
+                            <option value="ALL">TODOS</option>
+                            <option value="CREATED">CREADO</option>
+                            <option value="PAID">PAGADO</option>
+                            <option value="FINISHED">FINALIZADO</option>
+                        </select>
+                    </div>
 
-                {/* Filtro por fechas */}
-                <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-                    <label htmlFor="startDate" style={{ marginRight: '10px', fontWeight: 'bold' }}>Fecha de inicio:</label>
-                    <input 
-                        type="date" 
-                        id="startDate" 
-                        value={startDate} 
-                        onChange={(e) => {
-                            setStartDate(e.target.value);
-                            setCurrentPage(1); // Reiniciar a la primera página al filtrar
-                        }}
-                        style={{ marginRight: '20px', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-                    />
-                    <label htmlFor="endDate" style={{ marginRight: '10px', fontWeight: 'bold' }}>Fecha de fin:</label>
-                    <input 
-                        type="date" 
-                        id="endDate" 
-                        value={endDate} 
-                        onChange={(e) => {
-                            setEndDate(e.target.value);
-                            setCurrentPage(1); // Reiniciar a la primera página al filtrar
-                        }}
-                        style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-                    />
+                    {/* Filtro por fechas */}
+                    <div style={{ textAlign: 'right' }}>
+                        <label htmlFor="startDate" style={{ marginRight: '10px', fontWeight: 'bold' }}>Fecha de inicio:</label>
+                        <input 
+                            type="date" 
+                            id="startDate" 
+                            value={startDate} 
+                            onChange={(e) => {
+                                setStartDate(e.target.value);
+                                setCurrentPage(1); // Reiniciar a la primera página al filtrar
+                            }}
+                            style={{ marginRight: '20px', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                        />
+                        <label htmlFor="endDate" style={{ marginRight: '10px', fontWeight: 'bold' }}>Fecha de fin:</label>
+                        <input 
+                            type="date" 
+                            id="endDate" 
+                            value={endDate} 
+                            onChange={(e) => {
+                                setEndDate(e.target.value);
+                                setCurrentPage(1); // Reiniciar a la primera página al filtrar
+                            }}
+                            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                        />
+                    </div>
                 </div>
 
                 {currentOrders.length > 0 ? (
