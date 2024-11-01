@@ -88,6 +88,31 @@ const updateProduct = async (productDto) => {
     }
 };
 
+// Nueva función para crear un producto
+const createProduct = async (productDto) => {
+    setLoading(true);
+    setError(null);
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.post('http://localhost:8080/api/product', productDto, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        // Agrega el nuevo producto al estado
+        setProducts(prevProducts => [...prevProducts, response.data]);
+        setFilteredProducts(prevFiltered => [...prevFiltered, response.data]);
+        
+        return response.data; // Retorna el producto creado
+    } catch (error) {
+        console.error('Error creating product:', error);
+        setError('Error al crear el producto.');
+    } finally {
+        setLoading(false);
+    }
+};
+
     return (
         <ProductContext.Provider value={{
             products,
@@ -99,7 +124,8 @@ const updateProduct = async (productDto) => {
             loading,
             error,
             getProductById,
-            updateProduct
+            updateProduct,
+            createProduct 
         }}>
             {children}
         </ProductContext.Provider>

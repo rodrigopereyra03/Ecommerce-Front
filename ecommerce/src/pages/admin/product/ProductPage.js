@@ -8,7 +8,10 @@ const ProductPage = () => {
     const navigate = useNavigate();
 
     const handleEdit = (id) => {
-        navigate(`/products/edit/${id}`); // Navega a la ruta de edición
+        navigate(`/products/edit/${id}`);
+    };
+    const handleNew = () => {
+        navigate(`/products/new`);
     };
 
     // Estados para la paginación
@@ -26,16 +29,33 @@ const ProductPage = () => {
     return (
         <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <h1 style={{ marginBottom: '20px' }}>PRODUCTOS</h1>
-
-            {/* Campo de búsqueda */}
-            <input 
-                type="text" 
-                placeholder="Buscar productos..." 
-                value={searchTerm} 
-                onChange={(e) => setSearchTerm(e.target.value)} 
-                style={{ padding: '10px', width: '300px', marginBottom: '20px' }}
-            />
-
+    
+            {/* Contenedor para el buscador y el botón "Nuevo" */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', width: '80%', marginBottom: '20px' }}>
+                {/* Campo de búsqueda */}
+                <input 
+                    type="text" 
+                    placeholder="Buscar productos..." 
+                    value={searchTerm} 
+                    onChange={(e) => setSearchTerm(e.target.value)} 
+                    style={{ padding: '10px', width: '300px' }}
+                />
+                {/* Botón "Nuevo" */}
+                <button 
+                    onClick={handleNew}
+                    style={{ 
+                        padding: '10px 20px', 
+                        backgroundColor: '#28a745',
+                        color: '#fff', 
+                        border: 'none', 
+                        borderRadius: '4px', 
+                        cursor: 'pointer' 
+                    }}
+                >
+                    Nuevo
+                </button>
+            </div>
+    
             {/* Tabla de productos */}
             <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
                 <table style={{ margin: '0 auto', borderCollapse: 'collapse', width: '80%', borderRadius: '8px', overflow: 'hidden' }}>
@@ -60,24 +80,32 @@ const ProductPage = () => {
                                 <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>{product.quantity}</td>
                                 <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>${product.price.toFixed(2)}</td>
                                 <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
-                                    <img 
-                                        src={product.mainImage} 
-                                        alt={product.name} 
-                                        style={{ width: '80px', height: '80px', objectFit: 'cover' }} 
-                                    />
-                                </td>
-                                <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
-                                    {product.images.map((image, index) => (
+                                    {product.mainImage ? (
                                         <img 
-                                            key={index} 
-                                            src={image} 
-                                            alt={`${product.name} - ${index + 1}`} 
-                                            style={{ width: '50px', height: '50px', objectFit: 'cover', marginRight: '5px' }} 
+                                            src={product.mainImage} 
+                                            alt={product.name} 
+                                            style={{ width: '80px', height: '80px', objectFit: 'cover' }} 
                                         />
-                                    ))}
+                                    ) : (
+                                        <span> - </span>
+                                    )}
                                 </td>
                                 <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
-                                    <button style={{ backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '4px', padding: '5px 10px', marginRight: '5px', cursor: 'pointer' }}
+                                    {product.images && product.images.length > 0 ? (
+                                        product.images.map((image, index) => (
+                                            <img 
+                                                key={index} 
+                                                src={image} 
+                                                alt={`${product.name} - ${index + 1}`} 
+                                                style={{ width: '50px', height: '50px', objectFit: 'cover', marginRight: '5px' }} 
+                                            />
+                                        ))
+                                    ) : (
+                                        <span> - </span>
+                                    )}
+                                </td>
+                                <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
+                                    <button style={{ backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', padding: '5px 10px', marginRight: '5px', cursor: 'pointer' }}
                                             onClick={() => handleEdit(product.id)}>Editar</button>
                                 </td>
                             </tr>
@@ -85,7 +113,7 @@ const ProductPage = () => {
                     </tbody>
                 </table>
             </div>
-
+    
             {/* Paginación */}
             <Pagination
                 productsPerPage={productsPerPage}
@@ -94,7 +122,7 @@ const ProductPage = () => {
                 currentPage={currentPage}
             />
         </div>
-    );
+    );    
 };
 
 // Componente de Paginación
