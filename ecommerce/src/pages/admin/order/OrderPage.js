@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { OrderContext } from '../context/orderContext';
+import { OrderContext } from '../../../context/orderContext';
 
 const OrderPage = () => {
     const { orders, handleStatusChange, updateOrderStatus } = useContext(OrderContext);
