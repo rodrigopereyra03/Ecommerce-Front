@@ -36,18 +36,21 @@ const EditPage = () => {
 
     const handleMainImageChange = (e) => {
         const file = e.target.files[0];
-        setProduct((prevProduct) => ({
-            ...prevProduct,
-            mainImage: file ? file.name : null, // Guarda solo el nombre del archivo
-        }));
+        if (file) {
+            const path = URL.createObjectURL(file); // Crea una URL temporal para la imagen
+            setProduct((prevProduct) => ({
+                ...prevProduct,
+                mainImage: path, // Guarda la ruta completa
+            }));
+        }
     };
     
     const handleImagesChange = (e) => {
         const files = Array.from(e.target.files);
-        const imageNames = files.map(file => file.name); // Guarda solo los nombres de archivos
+        const imagePaths = files.map(file => URL.createObjectURL(file)); // Crea URLs temporales
         setProduct((prevProduct) => ({
             ...prevProduct,
-            images: imageNames,
+            images: imagePaths, // Guarda las rutas completas
         }));
     };
 
@@ -56,11 +59,11 @@ const EditPage = () => {
         try {
             const updatedProduct = {
                 ...product,
-                mainImage: product.mainImage, // Solo el nombre del archivo
-                images: product.images, // Nombres de los archivos adicionales
+                mainImage: product.mainImage,
+                images: product.images,
             };
     
-            // Envía solo el nombre de la imagen principal y de las imágenes adicionales
+            
             await updateProduct(updatedProduct);
             navigate('/products');
         } catch (error) {
@@ -132,38 +135,6 @@ const EditPage = () => {
                             required
                             style={styles.input}
                         />
-                    </div>
-                    <div style={styles.inputGroup}>
-                        <label htmlFor="mainImage">Imagen Principal:</label>
-                        <input
-                            type="file"
-                            id="mainImage"
-                            name="mainImage"
-                            accept="image/*"
-                            onChange={handleMainImageChange}
-                        />
-                        {product.mainImage && <p>Imagen actual: {product.mainImage}</p>} {/* Muestra la imagen actual */}
-                    </div>
-                    <div style={styles.inputGroup}>
-                        <label htmlFor="images">Imágenes Adicionales:</label>
-                        <input
-                            type="file"
-                            id="images"
-                            name="images"
-                            accept="image/*"
-                            multiple
-                            onChange={handleImagesChange}
-                        />
-                        {product.images && product.images.length > 0 && (
-                            <div>
-                                <p>Imágenes actuales:</p>
-                                <ul>
-                                    {product.images.map((imageName, index) => (
-                                        <li key={index}>{imageName}</li> // Muestra los nombres de las imágenes actuales
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
                     </div>
                     <button type="submit" style={styles.button}>Actualizar Producto</button>
                 </form>
