@@ -88,7 +88,7 @@ const updateProduct = async (productDto) => {
     }
 };
 
-// Nueva función para crear un producto
+// Función para crear un producto
 const createProduct = async (productDto) => {
     setLoading(true);
     setError(null);
@@ -113,6 +113,33 @@ const createProduct = async (productDto) => {
     }
 };
 
+// Nueva función para eliminar un producto
+const deleteProduct = async (id) => {
+    setLoading(true);
+    setError(null);
+    try {
+        const token = localStorage.getItem('token');
+        await axios.delete(`http://localhost:8080/api/product/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        // Actualiza el estado de los productos después de la eliminación
+        setProducts(prevProducts => 
+            prevProducts.filter(product => product.id !== id)
+        );
+        setFilteredProducts(prevFilteredProducts => 
+            prevFilteredProducts.filter(product => product.id !== id)
+        );
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        setError('Error al eliminar el producto.');
+    } finally {
+        setLoading(false);
+    }
+};
+
     return (
         <ProductContext.Provider value={{
             products,
@@ -125,7 +152,8 @@ const createProduct = async (productDto) => {
             error,
             getProductById,
             updateProduct,
-            createProduct 
+            createProduct,
+            deleteProduct
         }}>
             {children}
         </ProductContext.Provider>

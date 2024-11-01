@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useProducts } from '../../../context/productContext';
 
 const ProductPage = () => {
-    const { filteredProducts, searchTerm, setSearchTerm } = useProducts();
+    const { filteredProducts, searchTerm, setSearchTerm, deleteProduct } = useProducts();
 
     const navigate = useNavigate();
 
@@ -12,6 +12,18 @@ const ProductPage = () => {
     };
     const handleNew = () => {
         navigate(`/products/new`);
+    };
+    
+
+    const handleDelete = async (id) => {
+        if (window.confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+            try {
+                await deleteProduct(id);
+                alert('Producto eliminado con éxito');
+            } catch (error) {
+                alert('Error al eliminar el producto.');
+            }
+        }
     };
 
     // Estados para la paginación
@@ -105,8 +117,18 @@ const ProductPage = () => {
                                     )}
                                 </td>
                                 <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
-                                    <button style={{ backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', padding: '5px 10px', marginRight: '5px', cursor: 'pointer' }}
-                                            onClick={() => handleEdit(product.id)}>Editar</button>
+                                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                        <button 
+                                            style={{ backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', padding: '5px 10px', marginRight: '5px', cursor: 'pointer' }}
+                                            onClick={() => handleEdit(product.id)}>Editar
+                                        </button>
+                                        <button 
+                                            style={{ backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer' }}
+                                            onClick={() => handleDelete(product.id)}
+                                        >
+                                            Borrar
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
