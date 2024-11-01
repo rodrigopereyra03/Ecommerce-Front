@@ -48,7 +48,7 @@ export const ProductProvider = ({ children }) => {
     setError(null);
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:8080/api/product/${id}`, {
+        const response = await axios.get(`${backendUrl}/api/product/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -68,7 +68,7 @@ const updateProduct = async (productDto) => {
     setError(null);
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.put('http://localhost:8080/api/product', productDto, {
+        const response = await axios.put(`${backendUrl}/api/product`, productDto, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -95,7 +95,7 @@ const createProduct = async (productDto) => {
     setError(null);
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.post('http://localhost:8080/api/product', productDto, {
+        const response = await axios.post(`${backendUrl}/api/product`, productDto, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -120,7 +120,7 @@ const deleteProduct = async (id) => {
     setError(null);
     try {
         const token = localStorage.getItem('token');
-        await axios.delete(`http://localhost:8080/api/product/${id}`, {
+        await axios.delete(`${backendUrl}/api/product/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
