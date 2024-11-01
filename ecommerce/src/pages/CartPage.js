@@ -4,7 +4,7 @@ import CartItem from '../components/CartItem';
 import { useCart } from '../context/cartContext'; // Asumiendo que el contexto está implementado
 import { Wallet } from "@mercadopago/sdk-react";
 import { useAuth } from '../context/authContext';
-
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const CartPage = () => {
     const { cart, setCart } = useCart(); // Obtener el carrito del contexto
     const { token, setToken } = useAuth();
@@ -47,6 +47,13 @@ const CartPage = () => {
     const handleAddressSubmit = async (event) => {
         event.preventDefault();
 
+
+        const emptyFields = Object.keys(formData).filter((key) => !formData[key]);
+        if (emptyFields.length > 0) {
+            alert('Por favor, completa todos los campos requeridos.');
+            return;
+        }
+
         try {
 
             const { street, number, zipCode, city, state } = formData;
@@ -58,8 +65,7 @@ const CartPage = () => {
                 description: item.description,
                 price: item.price
             }));
-
-            const responseOrder = await fetch('http://localhost:8080/api/orders', {
+            const responseOrder = await fetch(`${backendUrl}/api/orders`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -74,14 +80,11 @@ const CartPage = () => {
                         state
                     },
                     products: products,
-                    documentNumber: 40897248
-
                 }),
             });
 
             try {
-
-                const responsePreference = await fetch('http://localhost:8080/api/mercadopago/create_preference', {
+                const responsePreference = await fetch(`${backendUrl}/api/mercadopago/create_preference`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -131,19 +134,25 @@ const CartPage = () => {
                         <p className="text-center">No hay productos en tu carrito.</p>
                     ) : (
                         <div className="row justify-content-center">
-                            <div className="col-12 col-md-6">
-                                {cart.map(item => (
-                                    <CartItem item={item} key={item.id} onRemove={removeItem} />
-                                ))}
-                                <div className="d-flex justify-content-between align-items-center mt-4 mb-4">
-                                    <h4>Total: ${totalAmount}</h4>
-                                    <button
-                                        className="btn btn-success"
-                                        onClick={handleCreateOrder}
-                                    >
-                                        Continuar
-                                    </button>
+                            <div className="col-12 col-md-8 col-lg-6">
+                                <div className="card shadow-sm border-0 p-3">
+                                    <div className="card-body">
+                                        <h4 className="card-title text-center mb-4">Productos en tu carrito</h4>
 
+                                        {cart.map(item => (
+                                            <CartItem item={item} key={item.id} onRemove={removeItem} />
+                                        ))}
+
+                                        <div className="d-flex justify-content-between align-items-center mt-4">
+                                            <h5 className="fw-bold text-success">Total: ${totalAmount}</h5>
+                                            <button
+                                                className="btn btn-primary btn-lg"
+                                                onClick={handleCreateOrder}
+                                            >
+                                                Continuar
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -155,45 +164,39 @@ const CartPage = () => {
             {step === 2 && (
 
                 <div className="address-form px-3">
-                    <h4 className="my-4 text-center">Decinos en donde queres recibir el pedido</h4>
-                    <form className="d-flex justify-content-center">
-                        <div className="col-12 col-md-6">
-                            <div className="row mb-3">
-                                <label htmlFor="street" className="form-label col-12">Calle</label>
+                    <h4 className="my-4 text-center">Decinos dónde queres recibir el pedido</h4>
+                    <form className="row justify-content-center" onSubmit={handleAddressSubmit}>
+                        <div className="col-12 col-md-8 col-lg-6">
+                            {[
+                                { label: "Calle", id: "street", name: "street", type: "text" },
+                                { label: "Número", id: "number", name: "number", type: "number" },
+                                { label: "Código Postal", id: "postalCode", name: "zipCode", type: "text" },
+                                { label: "Provincia", id: "provincia", name: "city", type: "text" },
+                                { label: "Localidad", id: "localidad", name: "state", type: "text" }
+                            ].map((field) => (
+                                <div className="mb-3" key={field.id}>
+                                    <label htmlFor={field.id} className="form-label">{field.label}</label>
+                                    <input
+                                        type={field.type}
+                                        className={`form-control ${!formData[field.name] ? 'is-invalid' : ''}`}
+                                        id={field.id}
+                                        name={field.name}
+                                        value={formData[field.name]}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                    {!formData[field.name] && <div className="invalid-feedback">Este campo es obligatorio</div>}
+                                </div>
+                            ))}
 
-                                <input type="text" className="form-control" id="street" name="street" value={formData.street} onChange={handleChange} required />
-
-                            </div>
-                            <div className="row mb-3">
-                                <label htmlFor="number" className="form-label col-12">Número</label>
-
-                                <input type="number" className="form-control" id="number" name="number" required value={formData.number} onChange={handleChange} />
-
-                            </div>
-                            <div className="row mb-3">
-                                <label htmlFor="postalCode" className="form-label col-12">Código Postal</label>
-
-                                <input type="text" className="form-control" id="postalCode" name="zipCode" required value={formData.zipCode} onChange={handleChange} />
-
-                            </div>
-                            <div className="row mb-3">
-                                <label htmlFor="provincia" className="form-label col-12">Provincia</label>
-
-                                <input type="text" className="form-control" id="provincia" name="city" required value={formData.city} onChange={handleChange} />
-
-                            </div>
-                            <div className="row mb-3">
-                                <label htmlFor="localidad" className="form-label col-12">Localidad</label>
-
-                                <input type="text" className="form-control" id="localidad" name="state" required value={formData.state} onChange={handleChange} />
-
-                            </div>
                             <div className="d-flex justify-content-between mt-4">
-                                <button type="submit" className="btn btn-primary" onClick={handleAddressSubmit}>Continuar al pago</button>
+                                <button type="submit" className="btn btn-primary">
+                                    Continuar al pago
+                                </button>
                                 <button
                                     type="button"
                                     className="btn btn-secondary ms-2"
-                                    onClick={() => setStep(1)} // Permite volver al paso anterior
+                                    onClick={() => setStep(1)}
                                 >
                                     Volver
                                 </button>
@@ -201,46 +204,42 @@ const CartPage = () => {
                         </div>
                     </form>
                 </div>
-
             )}
             {step === 3 && (
                 <div className="row justify-content-center">
                     <div className="col-12 col-md-8 col-lg-6">
-                        <h3 className="text-center">Realizar Pago</h3>
-                        <p>Total a pagar: ${totalAmount}</p>
-                        <p>Puedes pagar con transferencia bancaria o a través de MercadoPago</p>
+                        <div className="card shadow-sm border-0">
+                            <div className="card-body">
+                                <h3 className="text-center mb-4">Realizar Pago</h3>
 
-                        <div className="row mt-5 align-items-center">
-                            <div className="col-12">
-                                <button
-                                    type="button"
-                                    className="btn btn-success  w-100"
-                                    onClick={() => setStep(4)}
-                                >
-                                    Pagar con transferencia
-                                </button>
-                            </div>
-                        </div>
+                                <div className="text-center mb-4">
+                                    <p className="display-6 fw-bold text-success">Total a pagar: ${totalAmount}</p>
+                                    <p className="text-muted">Puedes pagar con transferencia bancaria o a través de MercadoPago</p>
+                                </div>
 
+                                <div className="d-grid gap-2">
+                                    <button
+                                        type="button"
+                                        className="btn btn-success btn-lg"
+                                        onClick={() => setStep(4)}
+                                    >
+                                        Pagar con transferencia
+                                    </button>
+                                </div>
 
-                        <div className="row mt-3 align-items-center">
-                            {/* Columna para el botón de MercadoPago */}
-                            <div className="col-12">
-                                {renderCheckoutButton(preferenceId)}
-                            </div>
-                        </div>
+                                <div className="text-center mt-3">
+                                    {renderCheckoutButton(preferenceId)}
+                                </div>
 
-
-                        {/* Fila para el botón "Volver" */}
-                        <div className="row mt-3">
-                            <div className="col text-center">
-                                <button
-                                    type="button"
-                                    className="btn btn-secondary"
-                                    onClick={() => setStep(2)} // Volver al formulario de dirección
-                                >
-                                    Volver
-                                </button>
+                                <div className="text-center mt-4">
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={() => setStep(2)} // Volver al formulario de dirección
+                                    >
+                                        Volver
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -250,35 +249,52 @@ const CartPage = () => {
             {step === 4 && (
                 <div className="row justify-content-center">
                     <div className="col-12 col-md-8 col-lg-6">
-                        <h3 className="text-center mb-3">Nuestros datos bancarios</h3>
-                        <p>Total a pagar: ${totalAmount}</p>
-                        <p>ALIAS : tomas.tomas.tomas</p>
-                        <p>CBU : 43587969493745897</p>
-                        <p>Titular : Tomas agustin Pereyra</p>
-                        <p>Banco : BBVA</p>
+                        <div className="card shadow-sm border-0">
+                            <div className="card-body">
+                                <h3 className="text-center mb-4">Nuestros datos bancarios</h3>
 
-                        <div className="row mt-5 align-items-center">
-                            <div className="col-12">
-                                <button
-                                    type="button"
-                                    className="btn btn-success  w-100"
-                                    onClick={handleTransfers}
-                                >
-                                    Adjuntar comprobante
-                                </button>
-                            </div>
-                        </div>
+                                <div className="text-center mb-4">
+                                    <p className="display-6 fw-bold text-success">Total a pagar: ${totalAmount}</p>
+                                </div>
 
-                        {/* Fila para el botón "Volver" */}
-                        <div className="row mt-3">
-                            <div className="col text-center">
-                                <button
-                                    type="button"
-                                    className="btn btn-secondary"
-                                    onClick={() => setStep(3)} // Volver al formulario de dirección
-                                >
-                                    Volver
-                                </button>
+                                <ul className="list-group list-group-flush">
+                                    <li className="list-group-item">
+                                        <strong>Alias:</strong> tomas.tomas.tomas
+                                    </li>
+                                    <li className="list-group-item">
+                                        <strong>CBU:</strong> 43587969493745897
+                                    </li>
+                                    <li className="list-group-item">
+                                        <strong>Titular:</strong> Tomas Agustin Pereyra
+                                    </li>
+                                    <li className="list-group-item">
+                                        <strong>Banco:</strong> BBVA
+                                    </li>
+                                </ul>
+
+                                <p className="mt-4 text-center text-muted">
+                                    Realiza la transferencia desde tu banco o billetera virtual y envíanos el comprobante.
+                                </p>
+
+                                <div className="d-grid gap-2 mt-4">
+                                    <button
+                                        type="button"
+                                        className="btn btn-success btn-lg"
+                                        onClick={handleTransfers}
+                                    >
+                                        Adjuntar comprobante
+                                    </button>
+                                </div>
+
+                                <div className="text-center mt-3">
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={() => setStep(3)} // Volver al formulario de dirección
+                                    >
+                                        Volver
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
