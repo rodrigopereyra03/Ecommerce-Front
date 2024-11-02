@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { OrderContext } from '../../../context/orderContext';
 
-const OrderPage = () => {
+const AdminOrderPage = () => {
     const { orders, handleStatusChange, updateOrderStatus } = useContext(OrderContext);
     
     // Paginación
@@ -170,4 +170,4 @@ const OrderPage = () => {
     );
 };
 
-export default OrderPage;
+export default AdminOrderPage;

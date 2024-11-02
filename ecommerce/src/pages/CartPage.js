@@ -122,9 +122,6 @@ const CartPage = () => {
 
         setStep(3); // Avanzar al paso 3: pago
     };
-    const handleTransfers = () => {
-        setStep(4); // Avanzar al siguiente paso
-    };
 
     const [file, setFile] = useState(null);
     const [message, setMessage] = useState("");
@@ -140,6 +137,28 @@ const CartPage = () => {
             setFileName(''); // Limpiar el nombre si no hay archivo
         }
     };
+    const handleSetMyAddress = async ()=>{
+
+        try {
+            const responseUser = await fetch(`${backendUrl}/user/${4}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                }
+             
+            });
+            
+            const responseBody = await responseUser.json();
+
+           
+
+        } catch (error) {
+            console.log(error)
+        }
+
+
+    }
 
     // Maneja la subida de imagen
     const handleUpload = async () => {
@@ -159,7 +178,30 @@ const CartPage = () => {
                 },
                 body: formData,
             });
+            if (!response.ok) {
+                // Manejo de errores en caso de respuesta no exitosa
+                const errorData = await response.text();
+                //  setError('Tuvimos un problema para iniciar sesion. Te redireccionaremos al login');
+                console.log(errorData)
+                return;
+            }
             const result = await response.text();
+
+            const responseUpdateOrder = await fetch(`${backendUrl}/api/orders/comprobante-url?comprobanteUrl=${result}`, {
+                method: "PUT",
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                },
+                body: JSON.stringify(null) 
+            });
+            if (!responseUpdateOrder.ok) {
+                // Manejo de errores en caso de respuesta no exitosa
+                const errorData = await responseUpdateOrder.json();
+                //  setError('Tuvimos un problema para iniciar sesion. Te redireccionaremos al login');
+                console.log(errorData)
+                return;
+            }
+
            
             setStep(5); // Avanzar al siguiente paso
             setCart([]); 
@@ -216,13 +258,22 @@ const CartPage = () => {
                 <div className="address-form px-3">
                     <h4 className="my-4 text-center">Decinos dónde queres recibir el pedido</h4>
                     <form className="row justify-content-center" onSubmit={handleAddressSubmit}>
+              
                         <div className="col-12 col-md-8 col-lg-6">
+                                <button     
+                                    type="button"
+                                    className="btn btn-link p-0 mb-2"
+                                    onClick={handleSetMyAddress}
+                                >
+                                    Quiero usar la direccion que cargue al registrarme
+                                </button>
+                      
                             {[
                                 { label: "Calle", id: "street", name: "street", type: "text" },
                                 { label: "Número", id: "number", name: "number", type: "number" },
                                 { label: "Código Postal", id: "postalCode", name: "zipCode", type: "text" },
-                                { label: "Provincia", id: "provincia", name: "city", type: "text" },
-                                { label: "Localidad", id: "localidad", name: "state", type: "text" }
+                                { label: "Localidad", id: "localidad", name: "state", type: "text" },
+                                { label: "Provincia", id: "provincia", name: "city", type: "text" }
                             ].map((field) => (
                                 <div className="mb-3" key={field.id}>
                                     <label htmlFor={field.id} className="form-label">{field.label}</label>
