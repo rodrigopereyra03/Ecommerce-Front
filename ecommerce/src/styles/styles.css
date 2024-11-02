@@ -224,3 +224,17 @@ footer {
 .collapse {
   transition: height 0.3s ease;
 }
+
+.file-input {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.file-input input[type="file"] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 0; /* Ocultamos el input */
+  cursor: pointer;
+}

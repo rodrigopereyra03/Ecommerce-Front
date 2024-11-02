@@ -4,6 +4,9 @@ import CartItem from '../components/CartItem';
 import { useCart } from '../context/cartContext'; // Asumiendo que el contexto está implementado
 import { Wallet } from "@mercadopago/sdk-react";
 import { useAuth } from '../context/authContext';
+import { FaUpload } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const CartPage = () => {
     const { cart, setCart } = useCart(); // Obtener el carrito del contexto
@@ -17,7 +20,7 @@ const CartPage = () => {
         city: '',
         state: '',
     });
-
+    const navigate = useNavigate();
     const removeItem = (id) => {
         setCart(cart.filter(item => item.id !== id)); // Filtrar los productos que no tienen el id a eliminar
     };
@@ -122,6 +125,53 @@ const CartPage = () => {
     const handleTransfers = () => {
         setStep(4); // Avanzar al siguiente paso
     };
+
+    const [file, setFile] = useState(null);
+    const [message, setMessage] = useState("");
+    const [fileName, setFileName] = useState('');
+
+    // Maneja la selección de archivo
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            setFileName(file.name); // Actualizar el estado con el nombre del archivo
+            setFile(file);
+        } else {
+            setFileName(''); // Limpiar el nombre si no hay archivo
+        }
+    };
+
+    // Maneja la subida de imagen
+    const handleUpload = async () => {
+        if (!file) {
+            alert("Selecciona una imagen primero.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await fetch(`${backendUrl}/api/images`, {
+                method: "POST",
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                },
+                body: formData,
+            });
+            const result = await response.text();
+           
+            setStep(5); // Avanzar al siguiente paso
+            setCart([]); 
+        } catch (error) {
+            console.error("Error al subir la imagen:", error);
+            setMessage("Error al subir la imagen");
+        }
+
+  
+    };
+
+
     return (
         <div className="container-sm justify-content-center mb-3">
 
@@ -277,13 +327,28 @@ const CartPage = () => {
                                 </p>
 
                                 <div className="d-grid gap-2 mt-4">
-                                    <button
-                                        type="button"
-                                        className="btn btn-success btn-lg"
-                                        onClick={handleTransfers}
-                                    >
-                                        Adjuntar comprobante
+
+                                    <input
+                                        id="fileInput"
+                                        type="file"
+                                        onChange={handleFileChange}
+                                        className="form-control d-none" // Ocultamos el input
+                                    />
+                                    {fileName && ( // Mostrar el nombre del archivo si existe
+                                        <div className="mt-2">
+                                            <strong>Archivo seleccionado:</strong> {fileName}
+                                        </div>
+                                    )}
+                                    <label htmlFor="fileInput" className="btn btn-primary ">
+                                        <FaUpload className="me-2" /> Adjuntar comprobante {/* Icono en el botón */}
+                                    </label>
+
+
+
+                                    <button onClick={handleUpload} type="button" className="btn btn-success btn-lg" disabled={!fileName}>
+                                        Enviar
                                     </button>
+                                    {message && <p className="mt-3">{message}</p>}
                                 </div>
 
                                 <div className="text-center mt-3">
@@ -300,6 +365,33 @@ const CartPage = () => {
                     </div>
                 </div>
             )}
+
+            {step === 5 && ( // Nuevo paso de confirmación de orden
+                <div className="row justify-content-center">
+                    <div className="col-12 col-md-8 col-lg-6">
+                        <div className="card shadow-sm border-0">
+                            <div className="card-body">
+                                <h3 className="text-center mb-4 fw-bold text-success">¡Gracias por tu compra!</h3>
+                                <p className="text-center">Estamos preparando tu pedido.</p>
+                                <div className="text-center">
+                                    <p>Te enviaremos mas informacion a tu correo.</p>
+                                </div>
+                                <div className="text-center mt-4">
+                                    <button
+                                        type="button"
+                                        className="btn btn-success"
+                                        onClick={() => navigate('/')} // Cambia al paso inicial o a otra sección
+                                    >
+                                        Ver mis ordenes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+
         </div>
     );
 };
