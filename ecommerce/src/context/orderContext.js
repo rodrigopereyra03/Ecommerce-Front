@@ -49,7 +49,6 @@ export const OrderProvider = ({ children }) => {
 
     const updateOrderStatus = async (orderId) => {
         try {
-            const token = localStorage.getItem('token');
             const updateOrderStatus = async (orderId) => {
                 try {
                     const token = localStorage.getItem('token');
