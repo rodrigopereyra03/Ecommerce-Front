@@ -78,6 +78,7 @@ const RegisterForm = () => {
                         documentNumber,
                         email,
                         password,
+                        address: addressData, // Añadimos la dirección
                     }),
                 });
 
