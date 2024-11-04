@@ -157,6 +157,12 @@ const CartPage = () => {
             });
 
             const responseBody = await responseUser.json();
+            const address = responseBody.addresses[0]
+            // Actualiza todos los valores de formData de una vez
+            setFormData(prevFormData => ({
+                ...formData,   // Conserva el estado anterior (opcional si estás reemplazando todos los valores)
+                ...address      // Sobrescribe los valores con los del nuevo objeto
+            }));
 
 
 
