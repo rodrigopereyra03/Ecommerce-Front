@@ -11,7 +11,7 @@ const ProductCard = ({ product }) => {
     };
     const description = product.description.replace(/\\n/g, '\n');
     return (
-        <div className="card mb-4 shadow-sm" style={{ width: '16rem' }}>
+        <div className="card mb-4 shadow-sm w-100" >
         <img src={product.mainImage} className="card-img-top" alt={product.name} style={{ height: '12rem', objectFit: 'cover' }} />
         <div className="card-body d-flex flex-column" style={{ height: '100%' }}>
             <h5 className="card-title">{product.name}</h5>

@@ -6,9 +6,11 @@ import { Wallet } from "@mercadopago/sdk-react";
 import { useAuth } from '../context/authContext';
 import { FaUpload } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import LoginModal from '../components/LoginModal';
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const CartPage = () => {
+    const [showAlert, setShowAlert] = useState(false);
     const { cart, setCart } = useCart(); // Obtener el carrito del contexto
     const { token, setToken } = useAuth();
     const [preferenceId, setPreferenceId] = useState();
@@ -24,7 +26,7 @@ const CartPage = () => {
     const removeItem = (id) => {
         setCart(cart.filter(item => item.id !== id)); // Filtrar los productos que no tienen el id a eliminar
     };
-
+    const isLoggedIn = !!localStorage.getItem('token');
     const renderCheckoutButton = (preferenceId) => {
         if (!preferenceId) return null;
         return (
@@ -38,6 +40,11 @@ const CartPage = () => {
     // Calcular el total del carrito
     const totalAmount = cart.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
     const handleCreateOrder = () => {
+        if (!isLoggedIn) {
+            setShowLoginModal(true);
+            return;
+        }
+
         setStep(2); // Avanzar al siguiente paso
     };
     const handleChange = (e) => {
@@ -137,21 +144,27 @@ const CartPage = () => {
             setFileName(''); // Limpiar el nombre si no hay archivo
         }
     };
-    const handleSetMyAddress = async ()=>{
+    const handleSetMyAddress = async () => {
 
         try {
-            const responseUser = await fetch(`${backendUrl}/user/${4}`, {
+            const responseUser = await fetch(`${backendUrl}/user/user-token`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + token,
                 }
-             
-            });
-            
-            const responseBody = await responseUser.json();
 
-           
+            });
+
+            const responseBody = await responseUser.json();
+            const address = responseBody.addresses[0]
+            // Actualiza todos los valores de formData de una vez
+            setFormData(prevFormData => ({
+                ...formData,   // Conserva el estado anterior (opcional si estás reemplazando todos los valores)
+                ...address      // Sobrescribe los valores con los del nuevo objeto
+            }));
+
+
 
         } catch (error) {
             console.log(error)
@@ -192,7 +205,7 @@ const CartPage = () => {
                 headers: {
                     'Authorization': 'Bearer ' + token,
                 },
-                body: JSON.stringify(null) 
+                body: JSON.stringify(null)
             });
             if (!responseUpdateOrder.ok) {
                 // Manejo de errores en caso de respuesta no exitosa
@@ -202,17 +215,31 @@ const CartPage = () => {
                 return;
             }
 
-           
+
             setStep(5); // Avanzar al siguiente paso
-            setCart([]); 
+            setCart([]);
         } catch (error) {
             console.error("Error al subir la imagen:", error);
             setMessage("Error al subir la imagen");
         }
 
-  
-    };
 
+    };
+    const [showLoginModal, setShowLoginModal] = useState(false);
+
+    // Funciones para manejar la apertura y cierre del modal
+    const handleOpenModal = () => setShowLoginModal(true);
+    const handleCloseModal = () => {
+        setShowLoginModal(false);
+        showSuccessAlert();
+    }
+
+    const showSuccessAlert = () => {
+        setShowAlert(true);
+        setTimeout(() => {
+            setShowAlert(false);
+        }, 4000); // Duración del alert (en milisegundos)
+    };
 
     return (
         <div className="container-sm justify-content-center mb-3">
@@ -246,8 +273,17 @@ const CartPage = () => {
                                         </div>
                                     </div>
                                 </div>
+                                <LoginModal show={showLoginModal} onHide={handleCloseModal} />
+                                {showAlert && (
+                                    <div className="alert alert-success alert-dismissible fade show" role="alert">
+                                        Ya podes continuar con la compra.
+                                        <button type="button" className="btn-close" onClick={() => setShowAlert(false)}></button>
+                                    </div>
+                                )}
                             </div>
+
                         </div>
+
                     )}
                 </>
             )}
@@ -258,16 +294,16 @@ const CartPage = () => {
                 <div className="address-form px-3">
                     <h4 className="my-4 text-center">Decinos dónde queres recibir el pedido</h4>
                     <form className="row justify-content-center" onSubmit={handleAddressSubmit}>
-              
+
                         <div className="col-12 col-md-8 col-lg-6">
-                                <button     
-                                    type="button"
-                                    className="btn btn-link p-0 mb-2"
-                                    onClick={handleSetMyAddress}
-                                >
-                                    Quiero usar la direccion que cargue al registrarme
-                                </button>
-                      
+                            <button
+                                type="button"
+                                className="btn btn-link p-0 mb-2"
+                                onClick={handleSetMyAddress}
+                            >
+                                Quiero usar la direccion que cargue al registrarme
+                            </button>
+
                             {[
                                 { label: "Calle", id: "street", name: "street", type: "text" },
                                 { label: "Número", id: "number", name: "number", type: "number" },
@@ -431,7 +467,7 @@ const CartPage = () => {
                                     <button
                                         type="button"
                                         className="btn btn-success"
-                                        onClick={() => navigate('/')} // Cambia al paso inicial o a otra sección
+                                        onClick={() => navigate('/orders')}
                                     >
                                         Ver mis ordenes
                                     </button>

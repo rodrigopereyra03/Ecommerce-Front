@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
+import { Button } from 'react-bootstrap';
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const RegisterForm = () => {
     const { login } = useAuth();
@@ -103,7 +104,7 @@ const RegisterForm = () => {
                     if (!responseLogin.ok) {
                         // Manejo de errores en caso de respuesta no exitosa
                         const errorData = await responseLogin.json();
-                        setError('Tuvimos un problema para iniciar sesion. Te redireccionaremos al login');
+                        setError('Tuvimos un problema para iniciar sesion');
                         return;
                     }
                     // Convertir la respuesta en JSON
@@ -136,176 +137,186 @@ const RegisterForm = () => {
 
     return (
         <div className="container mt-5 mb-5">
-            <div className="row justify-content-center">
-                <div className="col-md-6">
-                    <div className="card">
-                        <div className="card-body">
-                            <h3 className="card-title text-center mb-4">
-                                {step === 1 ? 'Tus datos' : 'Tu direccion'}
-                            </h3>
-                            {error && <div className="alert alert-danger">{error}</div>}
+        <div className="row justify-content-center">
+            <div className="col-md-6">
+                <div className="card">
+                    <div className="card-body">
+                        <h3 className="card-title text-center mb-4">
+                            {step === 1 ? 'Tus datos' : 'Tu dirección'}
+                        </h3>
+                        {error && <div className="alert alert-danger text-center">{error}</div>}
 
-                            <form onSubmit={handleSubmit}>
-                                {step === 1 ? (
-                                    <>
-                                        <div className="mb-3">
-                                            <label htmlFor="name" className="form-label">Nombre</label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                id="name"
-                                                name="name"
-                                                value={formData.name}
-                                                onChange={handleChange}
-                                                placeholder="Ingresa tu nombre"
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="name" className="form-label">Apellido</label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                id="lastName"
-                                                name="lastName"
-                                                value={formData.lastName}
-                                                onChange={handleChange}
-                                                placeholder="Ingresa tu apellido"
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="documentNumber" className="form-label">Numero de documento</label>
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                id="documentNumber"
-                                                name="documentNumber"
-                                                value={formData.documentNumber}
-                                                onChange={handleChange}
-                                                placeholder="Ingresa tu numero de documento"
-                                            />
-                                        </div>
-                                        <hr />
-                                        <div className="mb-3">
-                                            <label htmlFor="email" className="form-label">Correo electrónico</label>
-                                            <input
-                                                type="email"
-                                                className="form-control"
-                                                id="email"
-                                                name="email"
-                                                value={formData.email}
-                                                onChange={handleChange}
-                                                placeholder="Ingresa tu correo"
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="password" className="form-label">Contraseña</label>
-                                            <input
-                                                type="password"
-                                                className="form-control"
-                                                id="password"
-                                                name="password"
-                                                value={formData.password}
-                                                onChange={handleChange}
-                                                placeholder="Crea una contraseña"
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="confirmPassword" className="form-label">Confirmar contraseña</label>
-                                            <input
-                                                type="password"
-                                                className="form-control"
-                                                id="confirmPassword"
-                                                name="confirmPassword"
-                                                value={formData.confirmPassword}
-                                                onChange={handleChange}
-                                                placeholder="Repite la contraseña"
-                                            />
-                                        </div>
-                                        <button type="button" onClick={handleSubmit} className="btn btn-primary w-100">
-                                            Siguiente
-                                        </button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <div className="mb-3">
-                                            <label htmlFor="street" className="form-label">Calle</label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                id="street"
-                                                name="street"
-                                                value={addressData.street}
-                                                onChange={handleAddressChange}
-                                                placeholder="Ingresa tu dirección"
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="number" className="form-label">Numero</label>
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                id="number"
-                                                name="number"
-                                                value={addressData.number}
-                                                onChange={handleAddressChange}
-                                                placeholder=""
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="zipCode" className="form-label">Código postal</label>
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                id="zipCode"
-                                                name="zipCode"
-                                                value={addressData.zipCode}
-                                                onChange={handleAddressChange}
-                                                placeholder="Ingresa tu código postal"
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="state" className="form-label">Localidad</label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                id="state"
-                                                name="state"
-                                                value={addressData.state}
-                                                onChange={handleAddressChange}
-                                                placeholder="Ingresa tu Localidad"
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="city" className="form-label">Provincia</label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                id="city"
-                                                name="city"
-                                                value={addressData.city}
-                                                onChange={handleAddressChange}
-                                                placeholder="Ingresa tu provincia"
-                                            />
-                                        </div>
-
-                                        <button type="submit" className="btn btn-success w-100">
-                                            Registrarme
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => setStep(1)}
-                                            className="btn btn-secondary w-100 mt-2"
-                                        >
-                                            Volver
-                                        </button>
-                                    </>
-                                )}
-                            </form>
-                        </div>
+                        <form onSubmit={handleSubmit} className="w-100"> {/* Asegúrate de que el formulario ocupe el ancho completo */}
+                            {step === 1 ? (
+                                <>
+                                    <div className="mb-3">
+                                        <label htmlFor="name" className="form-label fw-semibold">Nombre</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="name"
+                                            name="name"
+                                            value={formData.name}
+                                            onChange={handleChange}
+                                            placeholder="Ingresa tu nombre"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="lastName" className="form-label fw-semibold">Apellido</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="lastName"
+                                            name="lastName"
+                                            value={formData.lastName}
+                                            onChange={handleChange}
+                                            placeholder="Ingresa tu apellido"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="documentNumber" className="form-label fw-semibold">Número de documento</label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            id="documentNumber"
+                                            name="documentNumber"
+                                            value={formData.documentNumber}
+                                            onChange={handleChange}
+                                            placeholder="Ingresa tu número de documento"
+                                            required
+                                        />
+                                    </div>
+                                    <hr />
+                                    <div className="mb-3">
+                                        <label htmlFor="email" className="form-label fw-semibold">Correo electrónico</label>
+                                        <input
+                                            type="email"
+                                            className="form-control"
+                                            id="email"
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleChange}
+                                            placeholder="Ingresa tu correo"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="password" className="form-label fw-semibold">Contraseña</label>
+                                        <input
+                                            type="password"
+                                            className="form-control"
+                                            id="password"
+                                            name="password"
+                                            value={formData.password}
+                                            onChange={handleChange}
+                                            placeholder="Crea una contraseña"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="confirmPassword" className="form-label fw-semibold">Confirmar contraseña</label>
+                                        <input
+                                            type="password"
+                                            className="form-control"
+                                            id="confirmPassword"
+                                            name="confirmPassword"
+                                            value={formData.confirmPassword}
+                                            onChange={handleChange}
+                                            placeholder="Repite la contraseña"
+                                            required
+                                        />
+                                    </div>
+                                    <Button type="button" onClick={handleSubmit} className="btn btn-primary w-100 mt-3">
+                                        Siguiente
+                                    </Button>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="mb-3">
+                                        <label htmlFor="street" className="form-label fw-semibold">Calle</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="street"
+                                            name="street"
+                                            value={addressData.street}
+                                            onChange={handleAddressChange}
+                                            placeholder="Ingresa tu dirección"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="number" className="form-label fw-semibold">Número</label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            id="number"
+                                            name="number"
+                                            value={addressData.number}
+                                            onChange={handleAddressChange}
+                                            placeholder=""
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="zipCode" className="form-label fw-semibold">Código postal</label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            id="zipCode"
+                                            name="zipCode"
+                                            value={addressData.zipCode}
+                                            onChange={handleAddressChange}
+                                            placeholder="Ingresa tu código postal"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="state" className="form-label fw-semibold">Localidad</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="state"
+                                            name="state"
+                                            value={addressData.state}
+                                            onChange={handleAddressChange}
+                                            placeholder="Ingresa tu localidad"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="city" className="form-label fw-semibold">Provincia</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="city"
+                                            name="city"
+                                            value={addressData.city}
+                                            onChange={handleAddressChange}
+                                            placeholder="Ingresa tu provincia"
+                                            required
+                                        />
+                                    </div>
+                                    <Button type="submit" className="btn btn-success w-100 mt-3">
+                                        Registrarme
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        onClick={() => setStep(1)}
+                                        className="btn btn-secondary w-100 mt-2"
+                                    >
+                                        Volver
+                                    </Button>
+                                </>
+                            )}
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     );
 };
 
