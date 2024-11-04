@@ -33,9 +33,9 @@ const App = () => {
 
                 {/* PrivateRoute para proteger la ruta por url */}
                 <Route path="/admin/orders" element={<PrivateRoute element={<AdminOrderPage />} />} />
-                <Route path="/admin/products" element={<ProductPage />} />
-                <Route path="/admin/products/edit/:id" element={<EditProductPage />} />
-                <Route path="/admin/products/new" element={<NewProductPage />} />
+                <Route path="/admin/products" element={<PrivateRoute element={<ProductPage />} />} />
+                <Route path="/admin/products/edit/:id" element={<PrivateRoute element={<EditProductPage />} />} />
+                <Route path="/admin/products/new" element={<PrivateRoute element={<NewProductPage />} />} />
             </Routes>
           </OrderProvider>
           <Footer />
