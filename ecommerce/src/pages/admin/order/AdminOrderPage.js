@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { OrderContext } from '../../../context/orderContext';
 
 const AdminOrderPage = () => {
-    const { orders, handleStatusChange, updateOrderStatus } = useContext(OrderContext);
+    const { orders, handleStatusChange, updateOrderStatus, fetchOrders } = useContext(OrderContext);
     
     // Paginación
     const itemsPerPage = 8; 
@@ -11,6 +11,10 @@ const AdminOrderPage = () => {
     const [startDate, setStartDate] = useState(''); // Fecha de inicio
     const [endDate, setEndDate] = useState(''); // Fecha de fin
     const totalPages = Math.ceil(orders.length / itemsPerPage);
+
+    useEffect(() => {
+        fetchOrders(); // Llama a fetchOrders al cargar la página
+    }, []);
 
     // Filtrar ordenes por estado
     const filteredOrders = selectedStatus === 'ALL' ? orders : orders.filter(order => order.status === selectedStatus);
