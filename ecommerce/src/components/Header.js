@@ -31,6 +31,10 @@ const Header = () => {
         navigate('/orders');
     }
 
+    const handleMyAccount = () => {
+        navigate('/myAccount');
+    }
+
     const handleLogout = () => {
 
         logout();
@@ -141,7 +145,7 @@ const Header = () => {
                                         {isLoggedIn ? (
                                             <>
                                                 <li>
-                                                    <button className="dropdown-item">Mis datos</button>
+                                                    <button className="dropdown-item" onClick={handleMyAccount}>Mis datos</button>
                                                 </li>
                                                 <li>
                                                     <button className="dropdown-item" onClick={handleMyOrders}>Mis pedidos</button>
