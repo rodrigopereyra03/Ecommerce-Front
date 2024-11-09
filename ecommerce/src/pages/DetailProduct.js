@@ -1,5 +1,5 @@
-import React, { useState,useEffect} from 'react';
-import { useParams,useNavigate  } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/cartContext';
 import { useSpinner } from '../context/spinnerContext';
 
@@ -11,7 +11,7 @@ const ProductDetailPage = () => {
     const [selectedImage, setSelectedImage] = useState(''); // Estado para la imagen seleccionada
     const [quantity, setQuantity] = useState(1); // Estado para la cantidad
     const { id } = useParams(); // Obtener el ID de la URL
-    const [showModal, setShowModal] = useState(false); 
+    const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
     // Función para obtener el producto desde el backend
     const fetchProduct = async (productId) => {
@@ -28,15 +28,15 @@ const ProductDetailPage = () => {
             hideSpinner();
         }
     };
-  
+
     // Función para cambiar la imagen seleccionada
     const handleImageClick = (image) => {
         setSelectedImage(image);
     };
-   // Ejecutar la función para obtener el producto cuando el componente se monte
-     useEffect(() => {
-      fetchProduct(id); // Llamar a la función con el ID del producto
-    }, [id]);     
+    // Ejecutar la función para obtener el producto cuando el componente se monte
+    useEffect(() => {
+        fetchProduct(id); // Llamar a la función con el ID del producto
+    }, [id]);
 
     // Función para manejar el cambio de cantidad
     const handleQuantityChange = (event) => {
@@ -62,16 +62,22 @@ const ProductDetailPage = () => {
 
 
 
-     // Si no se encuentra el producto
-     if (!product) {
+    // Si no se encuentra el producto
+    if (!product) {
         return <div>Producto no encontrado.</div>;
     }
     const description = product.description.replace(/\\n/g, '\n');
     return (
-        <div className="container mt-5 mb-5">
+        <div className="container mt-5 mb-5 shadow-sm">
+            <div className="row mb-4">
+                <div className="col text-center">
+                    <h1>{product.name}</h1>
+                </div>
+            </div>
             <div className="row">
                 {/* Columna para imágenes */}
                 <div className="col-md-6">
+
                     <div className="mb-3">
                         {/* Imagen principal del producto */}
                         <img
@@ -82,16 +88,26 @@ const ProductDetailPage = () => {
                         />
                     </div>
 
-                    {/* Galería de imágenes adicionales */}
-                    <div className="d-flex justify-content-between">
+                    <div
+                        className="d-flex overflow-auto bg-white p-2 rounded  mb-4"
+                        style={{ gap: '10px' }}
+                    >
                         {product.images.map((image, index) => (
                             <img
                                 key={index}
                                 src={image}
                                 alt={`Imagen ${index + 1}`}
-                                className="img-thumbnail"
+                                className="img-thumbnail rounded"
                                 onClick={() => handleImageClick(image)}
-                                style={{ cursor: 'pointer', maxHeight: '150px', objectFit: 'cover' }}
+                                style={{
+                                    cursor: 'pointer',
+                                    maxHeight: '140px',
+                                    width: '140px',
+                                    objectFit: 'cover',
+                                    transition: 'transform 0.2s',
+                                }}
+                                onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')}
+                                onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                             />
                         ))}
                     </div>
@@ -99,19 +115,19 @@ const ProductDetailPage = () => {
 
                 {/* Columna para los detalles del producto */}
                 <div className="col-md-6">
-                    <h2>{product.name}</h2>
-                 {/*  <p className="text-muted">Categoría: {product.category}</p>*/}
+
+                    {/*  <p className="text-muted">Categoría: {product.category}</p>*/}
 
                     <pre className="card-text font">{description}</pre>
-                    
+
                     <div className="my-4">
                         {/* Mostrar el stock del producto */}
                         <p className="text-muted">
                             {product.quantity > 0 ? `Stock disponible: ${product.quantity}` : 'Producto agotado'}
                         </p>
                         <h4 className="text-success">${product.price}</h4>
-                         {/* Input para seleccionar la cantidad */}
-                         <div className="mt-3">
+                        {/* Input para seleccionar la cantidad */}
+                        <div className="mt-3">
                             <label htmlFor="quantity" className="form-label">Cantidad:</label>
                             <input
                                 type="number"
@@ -124,20 +140,20 @@ const ProductDetailPage = () => {
                             />
                         </div>
                     </div>
-                    
+
 
                     {/* Botón para agregar al carrito */}
-                    <button className="btn btn-success btn-lg w-100"  onClick={handleAddToCart} >Agregar al carrito</button>
+                    <button className="btn btn-success btn-lg w-100" onClick={handleAddToCart} >Agregar al carrito</button>
                 </div>
             </div>
- {/* Modal */}
- {showModal && (
+            {/* Modal */}
+            {showModal && (
                 <div className="modal show fade d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
                     <div className="modal-dialog modal-dialog-centered" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title">Sumaste un producto al carrito</h5>
-                                <button type="button" className="close" style={{ position: 'absolute', right: '15px', top: '10px' }}  onClick={() => setShowModal(false)}>
+                                <button type="button" className="close" style={{ position: 'absolute', right: '15px', top: '10px' }} onClick={() => setShowModal(false)}>
                                     <span>&times;</span>
                                 </button>
                             </div>

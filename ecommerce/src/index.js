@@ -11,7 +11,13 @@ import { SpinnerProvider } from './context/spinnerContext';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <SpinnerProvider> 
+       <CartProvider>
+      <ProductProvider>
+        <AuthProvider>
     <App />
+    </AuthProvider>
+    </ProductProvider>
+    </CartProvider>
     </SpinnerProvider>,
 );
 
