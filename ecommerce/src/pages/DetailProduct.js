@@ -1,27 +1,31 @@
 import React, { useState,useEffect} from 'react';
 import { useParams,useNavigate  } from 'react-router-dom';
 import { useCart } from '../context/cartContext';
+import { useSpinner } from '../context/spinnerContext';
+
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const ProductDetailPage = () => {
+    const { showSpinner, hideSpinner } = useSpinner();
     const { addToCart } = useCart(); // Obtener la función para agregar al carrito
     const [product, setProduct] = useState(null); // Estado para el producto
     const [selectedImage, setSelectedImage] = useState(''); // Estado para la imagen seleccionada
     const [quantity, setQuantity] = useState(1); // Estado para la cantidad
     const { id } = useParams(); // Obtener el ID de la URL
-    const [loading, setLoading] = useState(true); // Estado de carga
     const [showModal, setShowModal] = useState(false); 
     const navigate = useNavigate();
     // Función para obtener el producto desde el backend
     const fetchProduct = async (productId) => {
         try {
+            showSpinner();
             const response = await fetch(`${backendUrl}/api/product/${productId}`);
             const data = await response.json();
             setProduct(data); // Actualizar el estado con los datos del producto
             setSelectedImage(data.mainImage); // Establecer la imagen principal
-            setLoading(false); // Cambiar el estado de carga
         } catch (error) {
             console.error('Error fetching product:', error);
-            setLoading(false); // Cambiar el estado de carga
+        }
+        finally {
+            hideSpinner();
         }
     };
   
@@ -57,10 +61,7 @@ const ProductDetailPage = () => {
     };
 
 
-    // Mientras los datos se están cargando
-    if (loading) {
-        return <div>Cargando...</div>;
-    }
+
      // Si no se encuentra el producto
      if (!product) {
         return <div>Producto no encontrado.</div>;

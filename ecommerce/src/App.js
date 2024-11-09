@@ -9,18 +9,23 @@ import RegisterForm from './components/RegisterForm';
 import ProductDetailPage from './pages/DetailProduct';
 import AdminOrderPage from './pages/admin/order/AdminOrderPage';
 import { OrderProvider } from './context/orderContext';
+import { SpinnerProvider } from './context/spinnerContext';
 import { initMercadoPago } from "@mercadopago/sdk-react";
 import ProductPage from './pages/admin/product/ProductPage';
 import EditProductPage from './pages/admin/product/EditProductPage';
 import NewProductPage from './pages/admin/product/NewProductPage';
 import OrderPage from './pages/OrderPage';
+import GlobalSpinner from './components/GlobalSpinner';
+import { ProductProvider } from './context/productContext';
 
 initMercadoPago("APP_USR-e2d33d78-50c6-4ad2-9a57-f8f0a59e7307", { locale: "es-AR" });
 
 const App = () => {
   return (
+    <SpinnerProvider>
       <Router>
           <Header />
+            <ProductProvider>
           <OrderProvider>
             <Routes>
                 <Route path="/" element={<Home />} />
@@ -36,8 +41,12 @@ const App = () => {
                 <Route path="/admin/products/new" element={<NewProductPage />} />
             </Routes>
           </OrderProvider>
+          </ProductProvider>
+       
           <Footer />
       </Router>
+      <GlobalSpinner />
+      </SpinnerProvider>
 
   );
 };
