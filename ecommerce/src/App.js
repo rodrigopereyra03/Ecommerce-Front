@@ -24,40 +24,40 @@ initMercadoPago("APP_USR-e2d33d78-50c6-4ad2-9a57-f8f0a59e7307", { locale: "es-AR
 const App = () => {
   return (
     <CartProvider>
-    <ProductProvider>
-      <AuthProvider>
-      <Router>
-         <SpinnerProvider>
-          <Header />
-            <ProductProvider>
-          <OrderProvider>
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/cart" element={<CartPage />} />
-                <Route path="/login" element={<LoginForm />} />
-                <Route path="/register" element={<RegisterForm />} />
-                <Route path="/product/:id" element={<ProductDetailPage />} />
-                <Route path="/orders" element={<OrderPage />} />
+      <ProductProvider>
+        <AuthProvider>
+          <Router>
+            <SpinnerProvider>
+              <Header />
+              <ProductProvider>
+                <OrderProvider>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/cart" element={<CartPage />} />
+                    <Route path="/login" element={<LoginForm />} />
+                    <Route path="/register" element={<RegisterForm />} />
+                    <Route path="/product/:id" element={<ProductDetailPage />} />
+                    <Route path="/orders" element={<OrderPage />} />
 
-                <Route path="/admin/orders" element={<AdminOrderPage />} />
-                <Route path="/admin/products" element={<ProductPage />} />
-                <Route path="/admin/products/edit/:id" element={<EditProductPage />} />
-                <Route path="/admin/products/new" element={<NewProductPage />} />
-            </Routes>
-          </OrderProvider>
-          </ProductProvider>
-       
-          <Footer />
-          <GlobalSpinner />
-          </SpinnerProvider>
-        
-      </Router>
-      </AuthProvider>
+                    <Route path="/admin/orders" element={<AdminOrderPage />} />
+                    <Route path="/admin/products" element={<ProductPage />} />
+                    <Route path="/admin/products/edit/:id" element={<EditProductPage />} />
+                    <Route path="/admin/products/new" element={<NewProductPage />} />
+                  </Routes>
+                </OrderProvider>
+              </ProductProvider>
+
+              <Footer />
+              <GlobalSpinner />
+            </SpinnerProvider>
+
+          </Router>
+        </AuthProvider>
       </ProductProvider>
-      </CartProvider>
+    </CartProvider>
 
 
-    
+
   );
 };
 
