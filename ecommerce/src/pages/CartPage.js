@@ -97,6 +97,10 @@ const CartPage = () => {
                 }),
             });
 
+            if(!responseOrder.ok){
+                console.log("error al crear la orden") //Agregar error
+            }
+
             try {
                 const responsePreference = await fetch(`${backendUrl}/api/mercadopago/create_preference`, {
                     method: 'POST',
