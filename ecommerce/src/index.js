@@ -10,15 +10,8 @@ import { AuthProvider } from './context/authContext';
 import { SpinnerProvider } from './context/spinnerContext';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <SpinnerProvider>
-  <CartProvider>
-  <ProductProvider>
-    <AuthProvider>
-    
+  <SpinnerProvider> 
     <App />
-    </AuthProvider>
-    </ProductProvider>
-    </CartProvider>
     </SpinnerProvider>,
 );
 

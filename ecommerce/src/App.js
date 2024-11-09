@@ -17,13 +17,17 @@ import NewProductPage from './pages/admin/product/NewProductPage';
 import OrderPage from './pages/OrderPage';
 import GlobalSpinner from './components/GlobalSpinner';
 import { ProductProvider } from './context/productContext';
-
+import { CartProvider } from './context/cartContext';
+import { AuthProvider } from './context/authContext';
 initMercadoPago("APP_USR-e2d33d78-50c6-4ad2-9a57-f8f0a59e7307", { locale: "es-AR" });
 
 const App = () => {
   return (
-    <SpinnerProvider>
+    <CartProvider>
+    <ProductProvider>
+      <AuthProvider>
       <Router>
+         <SpinnerProvider>
           <Header />
             <ProductProvider>
           <OrderProvider>
@@ -44,10 +48,16 @@ const App = () => {
           </ProductProvider>
        
           <Footer />
+          <GlobalSpinner />
+          </SpinnerProvider>
+        
       </Router>
-      <GlobalSpinner />
-      </SpinnerProvider>
+      </AuthProvider>
+      </ProductProvider>
+      </CartProvider>
 
+
+    
   );
 };
 
