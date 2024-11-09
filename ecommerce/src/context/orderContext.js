@@ -1,14 +1,20 @@
 // OrderContext.js
 import React, { createContext, useState, useEffect } from 'react';
+import { useSpinner } from './spinnerContext';
+
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 export const OrderContext = createContext();
 
+
 export const OrderProvider = ({ children }) => {
+    const { showSpinner, hideSpinner } = useSpinner();
+
     const [orders, setOrders] = useState([]);
     const [statusUpdates, setStatusUpdates] = useState({});
     // Función para obtener ordenes usando fetch
     const fetchOrders = async () => {
         try {
+            showSpinner();
             const token = localStorage.getItem('token');
             const response = await fetch(`${backendUrl}/api/orders`, {
                 method: 'GET',
@@ -27,6 +33,10 @@ export const OrderProvider = ({ children }) => {
         } catch (error) {
             console.error('Error al obtener las ordenes:', error);
         }
+        finally {
+            hideSpinner();
+        }
+
     };
 
     useEffect(() => {
@@ -51,6 +61,7 @@ export const OrderProvider = ({ children }) => {
         try {
             const updateOrderStatus = async (orderId) => {
                 try {
+                    showSpinner();
                     const token = localStorage.getItem('token');
                     const status = statusUpdates[orderId];
             
@@ -71,6 +82,9 @@ export const OrderProvider = ({ children }) => {
                     console.log("Order status updated:", data);
                 } catch (error) {
                     console.error('Error updating order status:', error);
+                }
+                finally {
+                    hideSpinner();
                 }
             };
 

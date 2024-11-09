@@ -238,3 +238,16 @@ footer {
   opacity: 0; /* Ocultamos el input */
   cursor: pointer;
 }
+
+.global-spinner-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; /* Asegúrate de que esté al frente */
+}

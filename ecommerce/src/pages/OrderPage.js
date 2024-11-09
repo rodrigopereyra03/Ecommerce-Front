@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Spinner, Alert } from 'react-bootstrap';
+import { useSpinner } from '../context/spinnerContext';
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const OrderPage = () => {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { showSpinner, hideSpinner } = useSpinner();
 
   useEffect(() => {
     // Fetch orders from the backend
     const fetchOrders = async () => {
       try {
         const token = localStorage.getItem('token');
+        showSpinner();
         const response = await fetch(`${backendUrl}/api/user/orders`,{
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -22,17 +24,17 @@ const OrderPage = () => {
         }
         const data = await response.json();
         setOrders(data);
-        setLoading(false);
       } catch (err) {
         setError('Error al cargar las órdenes');
-        setLoading(false);
       }
+      finally {
+        hideSpinner();
+    }
     };
 
     fetchOrders();
   }, []);
 
-  if (loading) return <Spinner animation="border" role="status"><span className="visually-hidden">Loading...</span></Spinner>;
 
   if (error) return <Alert variant="danger">{error}</Alert>;
 
