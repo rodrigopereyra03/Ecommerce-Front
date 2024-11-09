@@ -8,10 +8,10 @@ const ProductPage = () => {
     const navigate = useNavigate();
 
     const handleEdit = (id) => {
-        navigate(`/products/edit/${id}`);
+        navigate(`/admin/products/edit/${id}`);
     };
     const handleNew = () => {
-        navigate(`/products/new`);
+        navigate(`/admin/products/new`);
     };
     
 

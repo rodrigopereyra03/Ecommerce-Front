@@ -19,6 +19,8 @@ import GlobalSpinner from './components/GlobalSpinner';
 import { ProductProvider } from './context/productContext';
 import { CartProvider } from './context/cartContext';
 import { AuthProvider } from './context/authContext';
+import PrivateRoute from './components/PrivateRoute';
+
 initMercadoPago("APP_USR-e2d33d78-50c6-4ad2-9a57-f8f0a59e7307", { locale: "es-AR" });
 
 const App = () => {
@@ -39,10 +41,10 @@ const App = () => {
                     <Route path="/product/:id" element={<ProductDetailPage />} />
                     <Route path="/orders" element={<OrderPage />} />
 
-                    <Route path="/admin/orders" element={<AdminOrderPage />} />
-                    <Route path="/admin/products" element={<ProductPage />} />
-                    <Route path="/admin/products/edit/:id" element={<EditProductPage />} />
-                    <Route path="/admin/products/new" element={<NewProductPage />} />
+                    <Route path="/admin/orders" element={<PrivateRoute element={<AdminOrderPage />} />} />
+                    <Route path="/admin/products" element={<PrivateRoute element={<ProductPage />} />} />
+                    <Route path="/admin/products/edit/:id" element={<PrivateRoute element={<EditProductPage />} />} />
+                    <Route path="/admin/products/new" element={<PrivateRoute element={<NewProductPage />} />} />
                   </Routes>
                 </OrderProvider>
               </ProductProvider>
@@ -55,9 +57,6 @@ const App = () => {
         </AuthProvider>
       </ProductProvider>
     </CartProvider>
-
-
-
   );
 };
 
