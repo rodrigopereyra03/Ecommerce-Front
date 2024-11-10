@@ -53,7 +53,7 @@ const Header = () => {
                      
                             <img
                                 src="logo-recortado.png"  // Logo para pantallas grandes
-                                alt="Logo Grande"
+                                alt="Logo grande"
                                 className="d-none d-lg-block"  // Ocultar en pantallas pequeñas
                                 style={{ width: '130px', height: '65px' }}
                             />

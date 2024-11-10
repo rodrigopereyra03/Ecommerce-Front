@@ -59,7 +59,7 @@ export const OrderProvider = ({ children }) => {
 
     const updateOrderStatus = async (orderId) => {
         try {
-            const updateOrderStatus = async (orderId) => {
+            //aca aparece como si no se llama
                 try {
                     showSpinner();
                     const token = localStorage.getItem('token');
@@ -86,8 +86,7 @@ export const OrderProvider = ({ children }) => {
                 finally {
                     hideSpinner();
                 }
-            };
-
+       
             const updatedOrders = orders.map((order) => {
                 if (order.id === orderId) {
                     return {
