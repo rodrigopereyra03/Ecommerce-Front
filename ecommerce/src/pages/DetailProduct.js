@@ -78,7 +78,7 @@ const ProductDetailPage = () => {
                 {/* Columna para imágenes */}
                 <div className="col-md-6">
 
-                    <div className="mb-3">
+                    <div className="mb-3 d-flex justify-content-center">
                         {/* Imagen principal del producto */}
                         <img
                             src={selectedImage}
