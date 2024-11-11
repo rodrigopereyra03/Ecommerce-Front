@@ -23,10 +23,10 @@ initMercadoPago("APP_USR-e2d33d78-50c6-4ad2-9a57-f8f0a59e7307", { locale: "es-AR
 
 const App = () => {
   return (
+    <ProductProvider>
           <Router>
             <SpinnerProvider>
               <Header />
-              <ProductProvider>
                 <OrderProvider>
                   <Routes>
                     <Route path="/" element={<Home />} />
@@ -42,13 +42,12 @@ const App = () => {
                     <Route path="/admin/products/new" element={<PrivateRoute element={<NewProductPage />} />} />
                   </Routes>
                 </OrderProvider>
-              </ProductProvider>
-
               <Footer />
               <GlobalSpinner />
             </SpinnerProvider>
 
           </Router>
+          </ProductProvider>
   );
 };
 
