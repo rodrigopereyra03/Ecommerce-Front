@@ -1,6 +1,9 @@
 import React from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 const Footer = () => {
+
+    const whatsappNumber = process.env.REACT_APP_WHATSAPP_NUMBER;
+
     return (
         <footer className="bg-light text-center text-lg-start mt-auto footer">
             <div className="text-center p-4">
@@ -14,11 +17,11 @@ const Footer = () => {
                     <a href="https://facebook.com" className="social-icon text-muted m-1" target="_blank" rel="noopener noreferrer">
                         <i className="bi bi-facebook"></i>
                     </a>
-                    <a href="https://twitter.com" className="social-icon text-muted m-1" target="_blank" rel="noopener noreferrer">
-                        <i className="bi bi-twitter"></i>
-                    </a>
                     <a href="https://instagram.com" className="social-icon text-muted m-1" target="_blank" rel="noopener noreferrer">
                         <i className="bi bi-instagram"></i>
+                    </a>
+                    <a href={`https://wa.me/${whatsappNumber}`} className="social-icon text-muted m-1" target="_blank" rel="noopener noreferrer">
+                        <i className="bi bi-whatsapp"></i>
                     </a>
                 </div>
             </div>
