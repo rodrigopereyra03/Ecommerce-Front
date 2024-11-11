@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/authContext';
-import { Spinner, Alert } from 'react-bootstrap';
+import { Spinner, Alert, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 const AccountPage = () => {
-    const { token, logout } = useAuth();
+    const { token } = useAuth();
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const navigate = useNavigate();
+
+    const goToChangePassword = () => {
+        navigate('/change-password', { state: { email: userData.email } }); // Enviar el email como parte del state
+    };
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -102,6 +109,11 @@ const AccountPage = () => {
                             ) : (
                                 <p className="text-center text-muted">No tienes direcciones registradas.</p>
                             )}
+                        </div>
+                        <div className="d-flex justify-content-center justify-content-md-end mt-3">
+                            <Button variant="primary" onClick={goToChangePassword}>
+                                Cambiar contraseña
+                            </Button>
                         </div>
                     </div>
                 </div>
