@@ -18,6 +18,7 @@ import AccountPage from './pages/AccountPage';
 import PrivateRoute from './components/PrivateRoute';
 import ChangePasswordPage from './pages/ChangePasswordPage';
 import { UserProvider } from './context/userContext';
+import RecoverPasswordPage from './pages/RecoverPasswordPage';
 
 initMercadoPago("APP_USR-e2d33d78-50c6-4ad2-9a57-f8f0a59e7307", { locale: "es-AR" });
 
@@ -34,8 +35,9 @@ const App = () => {
                 <Route path="/register" element={<RegisterForm />} />
                 <Route path="/product/:id" element={<ProductDetailPage />} />
                 <Route path="/orders" element={<OrderPage />} />
-                <Route path="/myAccount" element={<AccountPage />} />
+                <Route path="/my-account" element={<AccountPage />} />
                 <Route path="/change-password" element={<ChangePasswordPage />} />
+                <Route path="/recover-password" element={<RecoverPasswordPage />} />
 
                 {/* PrivateRoute para proteger la ruta por url */}
                 <Route path="/admin/orders" element={<PrivateRoute element={<AdminOrderPage />} />} />

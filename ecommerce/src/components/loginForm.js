@@ -44,6 +44,10 @@ const LoginForm = ({ onClose }) => { // Recibe `onClose` como prop opcional
         }
     };
 
+    const handleRecoverPassword = () => {
+      navigate('/recover-password'); // Redirige a la página de recuperar contraseña
+  };
+
     return (
         <div className="container mt-5 mb-5 w-100">
         <div className="row justify-content-center">
@@ -79,17 +83,33 @@ const LoginForm = ({ onClose }) => { // Recibe `onClose` como prop opcional
                       style={{ fontSize: "0.9rem" }}
                     />
                   </div>
-                  <button
-                    type="submit"
-                    className="btn w-100 mt-3 text-white fw-semibold"
-                    style={{
-                      backgroundColor: "#5cb85c",
-                      borderColor: "#5cb85c",
-                      boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)"
-                    }}
-                  >
-                    Iniciar sesión
-                  </button>
+                  <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mt-3">
+                    <button
+                      type="submit"
+                      className="btn text-white fw-semibold w-100 w-md-auto mb-2 mb-md-0 me-md-2"
+                      style={{
+                        backgroundColor: "#5cb85c",
+                        borderColor: "#5cb85c",
+                        boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                        width: "45%", // Ancho ajustado
+                      }}
+                    >
+                      Iniciar sesión
+                    </button>
+                    <button
+                      type="button"
+                      className="btn text-white fw-semibold w-100 w-md-auto ms-md-2"
+                      style={{
+                          backgroundColor: "#d9534f", // Rojo
+                          borderColor: "#d9534f",
+                          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                          width: "45%", // Ancho ajustado
+                      }}
+                      onClick={handleRecoverPassword}
+                    >
+                      Olvidé mi contraseña
+                    </button>
+                  </div>
                 </form>
               </div>
             </div>

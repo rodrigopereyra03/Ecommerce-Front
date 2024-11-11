@@ -31,7 +31,7 @@ const ChangePasswordPage = () => {
                 if (response.includes('Password updated successfully')) {
                     alert('Contraseña cambiada con éxito');
                     setError(null); // Limpiamos cualquier error previo
-                    navigate('/myAccount');
+                    navigate('/my-account');
                 } else if (response.includes('Current password is incorrect')) {
                     setError('La contraseña actual no es correcta');
                 } else if (response.includes('New password must be at least 6 characters long and contain at least one uppercase letter.')) {

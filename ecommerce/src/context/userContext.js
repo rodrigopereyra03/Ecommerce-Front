@@ -12,6 +12,7 @@ export const useUser = () => {
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null); // Aquí puedes manejar el usuario si lo necesitas
 
+    //funcion para cambiar la contraseña desde my-account
     const changePassword = async (email, contrasenaActual, contrasenaNueva, confirmaNuevaContrasena) => {
         try {
             const token = localStorage.getItem('token');
@@ -42,8 +43,31 @@ export const UserProvider = ({ children }) => {
         }
     };
 
+    //funcion para recuperar la contraseña desde el login
+    const resetPassword = async (email) => {
+        try {
+            // Realizamos la solicitud a la API
+            const response = await fetch(`${backendUrl}/api/auth/reset-password?email=${email}`, {
+                method: 'POST',
+            });
+
+    
+            // Si la respuesta es correcta, devolvemos el mensaje esperado
+            // Aquí verificamos el tipo de respuesta
+            const contentType = response.headers.get('content-type');
+            const data = contentType && contentType.includes('application/json')
+            ? await response.json()
+            : await response.text();
+
+            return data;
+        } catch (error) {
+            console.error("Error en resetPassword:", error);
+            throw new Error('Error al intentar restablecer la contraseña.');
+        }
+    };
+
     return (
-        <UserContext.Provider value={{ user, setUser, changePassword }}>
+        <UserContext.Provider value={{ user, setUser, changePassword, resetPassword }}>
             {children}
         </UserContext.Provider>
     );

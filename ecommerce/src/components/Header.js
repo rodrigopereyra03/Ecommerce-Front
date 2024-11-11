@@ -32,7 +32,7 @@ const Header = () => {
     }
 
     const handleMyAccount = () => {
-        navigate('/myAccount');
+        navigate('/my-account');
     }
 
     const handleLogout = () => {
