@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useProducts } from '../context/productContext';
 import { useCart } from '../context/cartContext';
@@ -44,8 +44,8 @@ const Header = () => {
     // Verificar si el usuario está logueado
     const isLoggedIn = !!localStorage.getItem('token'); // Devuelve true si hay token, false si no
     const userRole = localStorage.getItem('userRole'); // Devuelve el rol del usuario logeado
-
-    const totalItems = (cart || []).reduce((total, item) => total + item.quantity, 0);
+   
+    const totalItems =   (cart || []).reduce((total, item) => Number(item.quantity) +Number(total) , 0);
 
 
     return (
@@ -57,13 +57,13 @@ const Header = () => {
                      
                             <img
                                 src="logo-recortado.png"  // Logo para pantallas grandes
-                                alt="Logo Grande"
+                                alt="Logo grande"
                                 className="d-none d-lg-block"  // Ocultar en pantallas pequeñas
                                 style={{ width: '130px', height: '65px' }}
                             />
 
                             <img
-                                src="project_20240920_1534178-02.jpg"  // Logo para pantallas pequeñas
+                                src="project_20240920_1534178-02.png"  // Logo para pantallas pequeñas
                                 alt="Logo Pequeño"
                                 className="d-block d-lg-none"  // Mostrar en pantallas pequeñas
                                 style={{ width: '65px', height: '65px' }}

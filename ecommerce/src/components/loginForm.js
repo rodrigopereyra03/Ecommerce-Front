@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/authContext'; // Importar el hook de autenticación
-
+import { useSpinner } from '../context/spinnerContext';
 import { useNavigate } from 'react-router-dom';
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
@@ -11,7 +11,7 @@ const LoginForm = ({ onClose }) => { // Recibe `onClose` como prop opcional
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-
+    const { showSpinner, hideSpinner } = useSpinner();
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -21,6 +21,7 @@ const LoginForm = ({ onClose }) => { // Recibe `onClose` como prop opcional
         }
         
         try {
+            showSpinner();
             const responseLogin = await fetch(`${backendUrl}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -42,6 +43,10 @@ const LoginForm = ({ onClose }) => { // Recibe `onClose` como prop opcional
         } catch (error) {
             setError('Tuvimos un problema para iniciar sesion.');
         }
+        finally {
+            hideSpinner();
+        }
+
     };
 
     const handleRecoverPassword = () => {

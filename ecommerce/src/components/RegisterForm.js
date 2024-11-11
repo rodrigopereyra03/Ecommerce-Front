@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
 import { Button } from 'react-bootstrap';
+import { useSpinner } from '../context/spinnerContext';
+
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const RegisterForm = () => {
+    const { showSpinner, hideSpinner } = useSpinner();
     const { login } = useAuth();
     const [formData, setFormData] = useState({
         name: '',
@@ -68,6 +71,7 @@ const RegisterForm = () => {
 
             // Enviar los datos al backend
             try {
+                showSpinner();
                 const response = await fetch(`${backendUrl}/api/auth/signup`, {
                     method: 'POST',
                     headers: {
@@ -121,13 +125,20 @@ const RegisterForm = () => {
                     setError('Tuvimos un problema para iniciar sesion. Te redireccionaremos al login');
 
                 }
-
-
+                finally {
+                    hideSpinner();
+                }
+        
+            
                 // Aquí podrías redirigir al usuario o mostrar un mensaje de éxito
             } catch (error) {
                 setError('Error al conectar con el servidor. Inténtalo nuevamente más tarde.');
 
             }
+            finally {
+                hideSpinner();
+            }
+    
 
 
             // Aquí manejarías el envío completo del formulario

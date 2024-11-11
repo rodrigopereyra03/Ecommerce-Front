@@ -7,9 +7,12 @@ import { useAuth } from '../context/authContext';
 import { FaUpload } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import LoginModal from '../components/LoginModal';
+import { useSpinner } from '../context/spinnerContext';
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const CartPage = () => {
+    const { showSpinner, hideSpinner } = useSpinner();
+    const [showLoginModal, setShowLoginModal] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const { cart, setCart } = useCart(); // Obtener el carrito del contexto
     const { token, setToken } = useAuth();
@@ -75,6 +78,7 @@ const CartPage = () => {
                 description: item.description,
                 price: item.price
             }));
+            showSpinner();
             const responseOrder = await fetch(`${backendUrl}/api/orders`, {
                 method: 'POST',
                 headers: {
@@ -92,6 +96,10 @@ const CartPage = () => {
                     products: products,
                 }),
             });
+
+            if(!responseOrder.ok){
+                console.log("error al crear la orden") //Agregar error
+            }
 
             try {
                 const responsePreference = await fetch(`${backendUrl}/api/mercadopago/create_preference`, {
@@ -126,6 +134,9 @@ const CartPage = () => {
             console.log(error)
 
         }
+        finally {
+            hideSpinner();
+        }
 
         setStep(3); // Avanzar al paso 3: pago
     };
@@ -147,6 +158,7 @@ const CartPage = () => {
     const handleSetMyAddress = async () => {
 
         try {
+            showSpinner();
             const responseUser = await fetch(`${backendUrl}/user/user-token`, {
                 method: 'GET',
                 headers: {
@@ -169,6 +181,9 @@ const CartPage = () => {
         } catch (error) {
             console.log(error)
         }
+        finally {
+            hideSpinner();
+        }
 
 
     }
@@ -184,6 +199,7 @@ const CartPage = () => {
         formData.append("file", file);
 
         try {
+            showSpinner();
             const response = await fetch(`${backendUrl}/api/images`, {
                 method: "POST",
                 headers: {
@@ -219,13 +235,12 @@ const CartPage = () => {
             setStep(5); // Avanzar al siguiente paso
             setCart([]);
         } catch (error) {
-            console.error("Error al subir la imagen:", error);
             setMessage("Error al subir la imagen");
         }
-
-
+        finally {
+            hideSpinner();
+        }
     };
-    const [showLoginModal, setShowLoginModal] = useState(false);
 
     // Funciones para manejar la apertura y cierre del modal
     const handleOpenModal = () => setShowLoginModal(true);
