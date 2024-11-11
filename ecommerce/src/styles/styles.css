@@ -251,3 +251,113 @@ footer {
   justify-content: center;
   z-index: 9999; /* Asegúrate de que esté al frente */
 }
+
+/* Contenedor de tarjetas personalizado */
+.custom-card-container {
+  padding-top: 20px;
+  background-color: #f8f9fa; /* Fondo claro */
+  border-radius: 10px;
+}
+
+/* Estilo para la barra de búsqueda */
+.search-bar input {
+  padding: 10px 20px;
+  font-size: 1rem;
+  transition: box-shadow 0.3s;
+}
+
+.search-bar input:focus {
+  box-shadow: 0px 0px 10px rgba(0, 123, 255, 0.5);
+}
+
+/* Estilos para la tarjeta de producto */
+.product-card {
+  transition: transform 0.3s, box-shadow 0.3s;
+  border-radius: 8px;
+}
+
+.product-card:hover {
+  transform: scale(1.03); /* Aumenta ligeramente en hover */
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Paginación */
+.pagination .page-link {
+  color: #007bff;
+  font-weight: 500;
+  border: none;
+  padding: 10px 15px;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #007bff;
+  color: white;
+  border-radius: 15px;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #ccc;
+}
+
+.pagination .page-link:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+  color: #0056b3;
+  border-radius: 15px;
+}
+
+ /*FOOTER SECTION */
+
+/* Estilo para el footer */
+.footer {
+  background-color: #f8f9fa; /* Fondo claro similar al contenedor */
+  color: #6c757d; /* Color de texto más suave */
+  border-top: 1px solid #e3e3e3; /* Delimitador superior */
+}
+
+.footer .text-muted {
+  font-size: 0.9rem;
+}
+
+.footer-link {
+  text-decoration: none; /* Elimina el subrayado */
+  color: #6c757d; /* Color de texto para los enlaces */
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #007bff; /* Color al pasar el ratón */
+}
+
+.social-icons {
+  margin-top: 10px;
+}
+
+.social-icon i {
+  font-size: 1.5rem;
+  color: #6c757d;
+  transition: color 0.3s ease;
+}
+
+.social-icon i:hover {
+  color: #007bff; /* Cambio de color al pasar el ratón */
+}
+
+.social-icon {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.social-icon:hover {
+  transform: scale(1.1); /* Efecto de escala al pasar el ratón */
+}
+
+/* Estilo para el footer en pantallas pequeñas */
+@media (max-width: 768px) {
+  .footer .text-center {
+      font-size: 0.85rem;
+  }
+
+  .social-icon i {
+      font-size: 1.3rem;
+  }
+}

@@ -65,7 +65,7 @@ const EditPage = () => {
     
             
             await updateProduct(updatedProduct);
-            navigate('/products');
+            navigate('/admin/products');
         } catch (error) {
             setError('Error al actualizar el producto');
             console.error('Error updating product:', error);
