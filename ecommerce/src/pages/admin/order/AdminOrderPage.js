@@ -102,6 +102,7 @@ const AdminOrderPage = () => {
                                 <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>PRODUCTOS</th>
                                 <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>DIRECCIÓN</th>
                                 <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>TOTAL</th>
+                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>COMPROBANTE</th>
                                 <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>ESTADO</th>
                                 <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>CON ENVIO</th>
                                 <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>ACCIONES</th>
@@ -123,6 +124,15 @@ const AdminOrderPage = () => {
                                         {order.address.street} {order.address.number}, {order.address.city}, {order.address.state}
                                     </td>
                                     <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>${order.amount}</td>
+                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
+                                        {order.comprobanteUrl ? (
+                                            <a href={order.comprobanteUrl} target="_blank" rel="noopener noreferrer">
+                                                <button style={{ backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', padding: '8px 12px' }}>Ver comprobante</button>
+                                            </a>
+                                        ) : (
+                                            <span>No tiene</span>
+                                        )}
+                                    </td>
                                     <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
                                         <select 
                                             value={order.status} 
