@@ -99,7 +99,7 @@ const CartPage = () => {
                         state
                     },
                     products: products,
-                    withDelivery: pickupPreference
+                    pickup: pickupPreference
                 }),
             });
 
