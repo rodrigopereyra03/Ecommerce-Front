@@ -11,6 +11,7 @@ import { useSpinner } from '../context/spinnerContext';
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const CartPage = () => {
+    const [orderId, setOrderId] = useState(null);
     const { showSpinner, hideSpinner } = useSpinner();
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
@@ -18,6 +19,7 @@ const CartPage = () => {
     const { token, setToken } = useAuth();
     const [preferenceId, setPreferenceId] = useState();
     const [step, setStep] = useState(1); // Controla el paso actual
+    const [pickupPreference, setPickupPreference] = useState(false);
     const [formData, setFormData] = useState({
         street: '',
         number: '',
@@ -36,7 +38,10 @@ const CartPage = () => {
             <Wallet
                 initialization={{ preferenceId: preferenceId, action: 'pay' }}
                 customization={{ texts: { valueProp: 'smart_option' } }}
-                onReady={true} />
+                onReady={true}
+                onSubmit={() => {
+                    updateOrderStatus("IN_REVIEW")
+                }} />
         )
     }
 
@@ -62,7 +67,7 @@ const CartPage = () => {
 
 
         const emptyFields = Object.keys(formData).filter((key) => !formData[key]);
-        if (emptyFields.length > 0) {
+        if (emptyFields.length > 0 && !pickupPreference) {
             alert('Por favor, completa todos los campos requeridos.');
             return;
         }
@@ -94,12 +99,16 @@ const CartPage = () => {
                         state
                     },
                     products: products,
+                    withDelivery: pickupPreference
                 }),
             });
 
-            if(!responseOrder.ok){
+            if (!responseOrder.ok) {
                 console.log("error al crear la orden") //Agregar error
             }
+            const responseOrderData = await responseOrder.json(); // Convierte la respuesta a JSON
+            const { id } = responseOrderData; // Extrae el id del objeto JSON
+            setOrderId(id);
 
             try {
                 const responsePreference = await fetch(`${backendUrl}/api/mercadopago/create_preference`, {
@@ -256,6 +265,35 @@ const CartPage = () => {
         }, 4000); // Duración del alert (en milisegundos)
     };
 
+    const updateOrderStatus = async (status) => {
+        try {
+            showSpinner();
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`${backendUrl}/api/orders/${orderId}/status?status=${status}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(null) // `fetch` requiere un cuerpo explícito en `PUT`, aunque sea null
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+
+        } catch (error) {
+
+        }
+        finally {
+            hideSpinner();
+        }
+
+    }
+
     return (
         <div className="container-sm justify-content-center mb-3">
 
@@ -315,6 +353,7 @@ const CartPage = () => {
                                 type="button"
                                 className="btn btn-link p-0 mb-2"
                                 onClick={handleSetMyAddress}
+                                disabled={pickupPreference}
                             >
                                 Quiero usar la direccion que cargue al registrarme
                             </button>
@@ -335,11 +374,33 @@ const CartPage = () => {
                                         name={field.name}
                                         value={formData[field.name]}
                                         onChange={handleChange}
+                                        disabled={pickupPreference}
                                         required
                                     />
-                                    {!formData[field.name] && <div className="invalid-feedback">Este campo es obligatorio</div>}
+                                    {!formData[field.name] && !pickupPreference && <div className="invalid-feedback">Este campo es obligatorio</div>}
                                 </div>
                             ))}
+
+                            {/* Línea divisora */}
+                            <hr className="my-4" />
+
+                            {/* Checkbox de preferencia de retiro */}
+                            <div className="form-check mb-4">
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id="pickupPreference"
+                                    name="pickupPreference"
+                                    onChange={(e) => setPickupPreference(e.target.checked)}
+                                />
+                                <label className="form-check-label" htmlFor="pickupPreference">
+                                    Prefiero retirar el pedido
+                                </label>
+                            </div>
+                            <p className="text-muted mt-2">
+                                Dirección de retiro: Av. Alsina 1960, Lomas de Zamora, Bs As.
+                            </p>
+
 
                             <div className="d-flex justify-content-between mt-4">
                                 <button type="submit" className="btn btn-primary">
