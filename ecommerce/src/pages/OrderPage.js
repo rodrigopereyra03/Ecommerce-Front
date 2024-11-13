@@ -1,16 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Button, Spinner, Alert } from 'react-bootstrap';
+import React, { useState, useEffect, useContext  } from 'react';
+import { Card, Button, Alert } from 'react-bootstrap';
 import { useSpinner } from '../context/spinnerContext';
+import { OrderContext } from '../context/orderContext';
+import { FaUpload } from 'react-icons/fa';
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const OrderPage = () => {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState(null);
+  const [files, setFiles] = useState({});
+  const [fileNames, setFileNames] = useState({});
   const { showSpinner, hideSpinner } = useSpinner();
+  const { handleUpload } = useContext(OrderContext);
 
   useEffect(() => {
-    // Fetch orders from the backend
-    const fetchOrders = async () => {
+    // trae las ordenes de un usuario por token
+    const fetchOrdersData = async () => {
       try {
         const token = localStorage.getItem('token');
         showSpinner();
@@ -32,7 +37,7 @@ const OrderPage = () => {
       }
     };
 
-    fetchOrders();
+    fetchOrdersData();
   }, []);
   const getFriendlyStatus = ((status) => {
     switch (status) {
@@ -49,6 +54,53 @@ const OrderPage = () => {
     }
   })
 
+  const handleFileChange = (event, orderId) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFiles(prevFiles => ({
+        ...prevFiles,
+        [orderId]: file,  // Guardamos el archivo con su orderId
+      }));
+      setFileNames(prevFileNames => ({
+        ...prevFileNames,
+        [orderId]: file.name,  // Guardamos el nombre del archivo
+      }));
+    } else {
+      setFiles(prevFiles => {
+        const { [orderId]: _, ...remainingFiles } = prevFiles;
+        return remainingFiles;  // Eliminamos el archivo si no se selecciona nada
+      });
+      setFileNames(prevFileNames => {
+        const { [orderId]: _, ...remainingFileNames } = prevFileNames;
+        return remainingFileNames;  // Eliminamos el nombre si no hay archivo
+      });
+    }
+  };
+
+  const handleFileUpload = async (orderId) => {
+    const file = files[orderId];
+    if (file) {
+      await handleUpload(orderId, file);
+      
+      // Mostrar alerta de éxito
+      alert('Comprobante subido correctamente');
+  
+      // Recargar la página para reflejar la actualización de la orden
+      window.location.reload();
+  
+      // Limpiar el archivo seleccionado después de subirlo
+      setFiles(prevFiles => {
+        const { [orderId]: _, ...remainingFiles } = prevFiles;
+        return remainingFiles;
+      });
+      setFileNames(prevFileNames => {
+        const { [orderId]: _, ...remainingFileNames } = prevFileNames;
+        return remainingFileNames;
+      });
+    } else {
+      alert('Selecciona una imagen primero.');
+    }
+  };
   if (error) return <Alert variant="danger">{error}</Alert>;
 
   return (
@@ -98,6 +150,29 @@ const OrderPage = () => {
                     <span className="text-muted">Comprobante no disponible</span>
                   )}
                 </div>
+                {!order.comprobanteUrl && (
+                  <div className="mt-3 text-center">
+                    <input
+                      id={`fileInput-${order.id}`}
+                      type="file"
+                      onChange={(e) => handleFileChange(e, order.id)}
+                      className="form-control d-none"
+                    />
+                    {fileNames[order.id] && (
+                      <div className="mt-2">
+                        <strong>Archivo seleccionado:</strong> {fileNames[order.id]}
+                      </div>
+                    )}
+                    <label htmlFor={`fileInput-${order.id}`} className="btn btn-primary mt-2">
+                      <FaUpload className="me-2" /> Adjuntar comprobante
+                    </label>
+                    {files[order.id] && (
+                      <Button className="mt-2" onClick={() => handleFileUpload(order.id)} variant="success">
+                        Subir Comprobante
+                      </Button>
+                    )}
+                  </div>
+                )}
               </Card.Body>
             </Card>
           </div>

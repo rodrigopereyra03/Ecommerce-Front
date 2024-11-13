@@ -103,8 +103,63 @@ export const OrderProvider = ({ children }) => {
         }
     };
 
+    
+    //-------------------funciones para las ordenes de los usuarios --------------------
+
+    //subir comprobante
+    const handleUpload = async (orderId, file) => {
+        if (!file) {
+          alert("Selecciona una imagen primero.");
+          return;
+        }
+    
+        const formData = new FormData();
+        formData.append("file", file);
+    
+        try {
+          showSpinner();
+          const token = localStorage.getItem('token');
+          const response = await fetch(`${backendUrl}/api/images`, {
+            method: "POST",
+            headers: {
+              'Authorization': 'Bearer ' + token,
+            },
+            body: formData,
+          });
+    
+          if (!response.ok) {
+            const errorData = await response.text();
+            console.error("Error al subir la imagen:", errorData);
+            return;
+          }
+    
+          const comprobanteUrl = await response.text();
+          console.log("Comprobante subido con éxito:", comprobanteUrl);
+    
+          const responseUpdateOrder = await fetch(`${backendUrl}/api/orders/${orderId}/comprobante-url?comprobanteUrl=${comprobanteUrl}`, {
+            method: "PUT",
+            headers: {
+              'Authorization': 'Bearer ' + token,
+              'Content-Type': 'application/json',
+            }
+          });
+    
+          if (!responseUpdateOrder.ok) {
+            const errorData = await responseUpdateOrder.json();
+            console.error("Error al actualizar la orden:", errorData);
+            return;
+          }
+    
+          console.log("Comprobante actualizado exitosamente");
+        } catch (error) {
+          console.error("Error al subir el comprobante:", error);
+        } finally {
+          hideSpinner();
+        }
+      };
+
     return (
-        <OrderContext.Provider value={{ orders, handleStatusChange, updateOrderStatus, fetchOrders }}>
+        <OrderContext.Provider value={{ orders, handleStatusChange, updateOrderStatus, fetchOrders, handleUpload }}>
             {children}
         </OrderContext.Provider>
     );
