@@ -88,6 +88,7 @@ const LoginForm = ({ onClose }) => { // Recibe `onClose` como prop opcional
                       style={{ fontSize: "0.9rem" }}
                     />
                   </div>
+               
                   <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mt-3">
                     <button
                       type="submit"
@@ -100,20 +101,16 @@ const LoginForm = ({ onClose }) => { // Recibe `onClose` como prop opcional
                       }}
                     >
                       Iniciar sesión
-                    </button>
-                    <button
-                      type="button"
-                      className="btn text-white fw-semibold w-100 w-md-auto ms-md-2"
-                      style={{
-                          backgroundColor: "#d9534f", // Rojo
-                          borderColor: "#d9534f",
-                          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                          width: "45%", // Ancho ajustado
-                      }}
-                      onClick={handleRecoverPassword}
-                    >
-                      Olvidé mi contraseña
-                    </button>
+                    </button>                 
+                  </div>
+                  <div className="d-flex flex-column flex-md-row justify-content-center align-items-center mt-3">
+                  <button
+                                type="button"
+                                className="btn btn-link p-0 mb-2"
+                                onClick={handleRecoverPassword}
+                            >
+                                Olvidé mi contraseña
+                            </button>
                   </div>
                 </form>
               </div>

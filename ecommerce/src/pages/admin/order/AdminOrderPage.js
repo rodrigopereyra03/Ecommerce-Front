@@ -60,6 +60,7 @@ const AdminOrderPage = () => {
                         >
                             <option value="ALL">TODOS</option>
                             <option value="CREATED">CREADO</option>
+                            <option value="IN_REVIEW">EN REVISIÓN</option>
                             <option value="PAID">PAGADO</option>
                             <option value="FINISHED">FINALIZADO</option>
                         </select>
@@ -102,6 +103,7 @@ const AdminOrderPage = () => {
                                 <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>DIRECCIÓN</th>
                                 <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>TOTAL</th>
                                 <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>ESTADO</th>
+                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>CON ENVIO</th>
                                 <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>ACCIONES</th>
                             </tr>
                         </thead>
@@ -128,10 +130,12 @@ const AdminOrderPage = () => {
                                             style={{ padding: '5px', borderRadius: '4px', border: '1px solid #ccc', textAlign: 'center' }}
                                         >
                                             <option value="CREATED">CREADO</option>
+                                            <option value="IN_REVIEW">EN REVISIÓN</option>
                                             <option value="PAID">PAGADO</option>
                                             <option value="FINISHED">FINALIZADO</option>
                                         </select>
                                     </td>
+                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>{order.withDelivery ? "SI" : "NO"}</td>
                                     <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
                                         <button 
                                             onClick={() => updateOrderStatus(order.id)}
