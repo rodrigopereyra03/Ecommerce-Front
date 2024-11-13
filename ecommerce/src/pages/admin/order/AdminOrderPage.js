@@ -104,7 +104,7 @@ const AdminOrderPage = () => {
                                 <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>TOTAL</th>
                                 <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>COMPROBANTE</th>
                                 <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>ESTADO</th>
-                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>CON ENVIO</th>
+                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>RETIRA</th>
                                 <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>ACCIONES</th>
                             </tr>
                         </thead>
@@ -121,7 +121,7 @@ const AdminOrderPage = () => {
                                         ))}
                                     </td>
                                     <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
-                                        {order.address.street} {order.address.number}, {order.address.city}, {order.address.state}
+                                        {order.pickup ? " - " : `${order.address.street} ${order.address.number}, ${order.address.city}, ${order.address.state}`}
                                     </td>
                                     <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>${order.amount}</td>
                                     <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
@@ -145,7 +145,7 @@ const AdminOrderPage = () => {
                                             <option value="FINISHED">FINALIZADO</option>
                                         </select>
                                     </td>
-                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>{order.withDelivery ? "SI" : "NO"}</td>
+                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>{order.pickup ? "SI" : "NO"}</td>
                                     <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
                                         <button 
                                             onClick={() => updateOrderStatus(order.id)}
