@@ -16,7 +16,7 @@ export const UserProvider = ({ children }) => {
     const changePassword = async (email, contrasenaActual, contrasenaNueva, confirmaNuevaContrasena) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${backendUrl}/user/change-password`, {
+            const response = await fetch(`${backendUrl}/api/user/change-password`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

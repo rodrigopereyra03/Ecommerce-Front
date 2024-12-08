@@ -168,7 +168,7 @@ const CartPage = () => {
 
         try {
             showSpinner();
-            const responseUser = await fetch(`${backendUrl}/user/user-token`, {
+            const responseUser = await fetch(`${backendUrl}/api/user/user-token`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
