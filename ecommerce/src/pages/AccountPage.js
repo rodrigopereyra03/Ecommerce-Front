@@ -21,7 +21,7 @@ const AccountPage = () => {
         const fetchUserData = async () => {
             if (token) {
                 try {
-                    const response = await fetch(`${backendUrl}/user/user-token`, {
+                    const response = await fetch(`${backendUrl}/api/user/user-token`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                         },
