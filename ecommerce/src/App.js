@@ -23,7 +23,7 @@ import ChangePasswordPage from './pages/ChangePasswordPage';
 import { UserProvider } from './context/userContext';
 import RecoverPasswordPage from './pages/RecoverPasswordPage';
 
-initMercadoPago("APP_USR-e2d33d78-50c6-4ad2-9a57-f8f0a59e7307", { locale: "es-AR" });
+initMercadoPago("APP_USR-7c9f1c8c-9210-4518-994e-34f89c401b06", { locale: "es-AR" });
 
 const App = () => {
   return (
