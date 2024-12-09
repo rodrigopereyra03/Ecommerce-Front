@@ -1,171 +1,189 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useState, useEffect, useContext  } from 'react';
+import { Card, Button, Alert } from 'react-bootstrap';
+import { useSpinner } from '../context/spinnerContext';
 import { OrderContext } from '../context/orderContext';
+import { FaUpload } from 'react-icons/fa';
 
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const OrderPage = () => {
-    const { orders, handleStatusChange, updateOrderStatus } = useContext(OrderContext);
-    
-    // Paginación
-    const itemsPerPage = 8; 
-    const [currentPage, setCurrentPage] = useState(1);
-    const [selectedStatus, setSelectedStatus] = useState('ALL');
-    const [startDate, setStartDate] = useState(''); // Fecha de inicio
-    const [endDate, setEndDate] = useState(''); // Fecha de fin
-    const totalPages = Math.ceil(orders.length / itemsPerPage);
+  const [orders, setOrders] = useState([]);
+  const [error, setError] = useState(null);
+  const [files, setFiles] = useState({});
+  const [fileNames, setFileNames] = useState({});
+  const { showSpinner, hideSpinner } = useSpinner();
+  const { handleUpload } = useContext(OrderContext);
 
-    // Filtrar ordenes por estado
-    const filteredOrders = selectedStatus === 'ALL' ? orders : orders.filter(order => order.status === selectedStatus);
+  useEffect(() => {
+    // trae las ordenes de un usuario por token
+    const fetchOrdersData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        showSpinner();
+        const response = await fetch(`${backendUrl}/api/user/orders`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Error al cargar las órdenes');
+        }
+        const data = await response.json();
+        setOrders(data);
+      } catch (err) {
+        setError('Error al cargar las órdenes');
+      }
+      finally {
+        hideSpinner();
+      }
+    };
 
-    // Filtrar por fechas
-const dateFilteredOrders = filteredOrders.filter(order => {
-    const orderDate = new Date(order.dateCreated);
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    fetchOrdersData();
+  }, []);
+  const getFriendlyStatus = ((status) => {
+    switch (status) {
+      case 'CREATED':
+        return 'Creada';
+      case 'IN_REVIEW':
+        return 'Estamos comprobando el pago';
+      case 'PAID':
+        return 'Pagada';
+      case 'FINISHED':
+        return 'Finalizada';
+      default:
+        return 'Desconocido';
+    }
+  })
 
-    // Comprobar si el orden cae dentro del rango de fechas (inclusivo)
-    const isAfterStart = !startDate || orderDate >= start;
-    const isBeforeEnd = !endDate || orderDate <= end;
+  const handleFileChange = (event, orderId) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFiles(prevFiles => ({
+        ...prevFiles,
+        [orderId]: file,  // Guardamos el archivo con su orderId
+      }));
+      setFileNames(prevFileNames => ({
+        ...prevFileNames,
+        [orderId]: file.name,  // Guardamos el nombre del archivo
+      }));
+    } else {
+      setFiles(prevFiles => {
+        const { [orderId]: _, ...remainingFiles } = prevFiles;
+        return remainingFiles;  // Eliminamos el archivo si no se selecciona nada
+      });
+      setFileNames(prevFileNames => {
+        const { [orderId]: _, ...remainingFileNames } = prevFileNames;
+        return remainingFileNames;  // Eliminamos el nombre si no hay archivo
+      });
+    }
+  };
 
-    return isAfterStart && isBeforeEnd;
-});
+  const handleFileUpload = async (orderId) => {
+    const file = files[orderId];
+    if (file) {
+      await handleUpload(orderId, file);
+      
+      // Mostrar alerta de éxito
+      alert('Comprobante subido correctamente');
+  
+      // Recargar la página para reflejar la actualización de la orden
+      window.location.reload();
+  
+      // Limpiar el archivo seleccionado después de subirlo
+      setFiles(prevFiles => {
+        const { [orderId]: _, ...remainingFiles } = prevFiles;
+        return remainingFiles;
+      });
+      setFileNames(prevFileNames => {
+        const { [orderId]: _, ...remainingFileNames } = prevFileNames;
+        return remainingFileNames;
+      });
+    } else {
+      alert('Selecciona una imagen primero.');
+    }
+  };
+  if (error) return <Alert variant="danger">{error}</Alert>;
 
-
-    // Obtener las ordenes de la página actual
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentOrders = dateFilteredOrders.slice(indexOfFirstItem, indexOfLastItem);
-
-    // Función para cambiar de página
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-    return (
-        <div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh' }}>
-            <div style={{ width: '80%', padding: '20px', overflowX: 'auto' }}>
-                <h1 style={{ textAlign: 'center', color: '#333' }}>Ordenes</h1>
-                {/* Filtro por estado */}
-                <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-                    <label htmlFor="statusFilter" style={{ marginRight: '10px', fontWeight: 'bold' }}>Filtrar por estado:</label>
-                    <select 
-                        id="statusFilter" 
-                        value={selectedStatus} 
-                        onChange={(e) => {
-                            setSelectedStatus(e.target.value);
-                            setCurrentPage(1); // Reiniciar a la primera página al filtrar
-                        }}
-                        style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-                    >
-                        <option value="ALL">TODOS</option>
-                        <option value="CREATED">CREADO</option>
-                        <option value="PAID">PAGADO</option>
-                        <option value="FINISHED">FINALIZADO</option>
-                    </select>
-                </div>
-
-                {/* Filtro por fechas */}
-                <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-                    <label htmlFor="startDate" style={{ marginRight: '10px', fontWeight: 'bold' }}>Fecha de inicio:</label>
-                    <input 
-                        type="date" 
-                        id="startDate" 
-                        value={startDate} 
-                        onChange={(e) => {
-                            setStartDate(e.target.value);
-                            setCurrentPage(1); // Reiniciar a la primera página al filtrar
-                        }}
-                        style={{ marginRight: '20px', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-                    />
-                    <label htmlFor="endDate" style={{ marginRight: '10px', fontWeight: 'bold' }}>Fecha de fin:</label>
-                    <input 
-                        type="date" 
-                        id="endDate" 
-                        value={endDate} 
-                        onChange={(e) => {
-                            setEndDate(e.target.value);
-                            setCurrentPage(1); // Reiniciar a la primera página al filtrar
-                        }}
-                        style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-                    />
-                </div>
-
-                {currentOrders.length > 0 ? (
-                    <table style={{ margin: '0 auto', borderCollapse: 'collapse', width: '100%', borderRadius: '8px', overflow: 'hidden' }}>
-                        <thead style={{ backgroundColor: '#007bff', color: '#fff' }}>
-                            <tr>
-                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>ID</th>
-                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>FECHA</th>
-                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>PRODUCTOS</th>
-                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>DIRECCIÓN</th>
-                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>TOTAL</th>
-                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>ESTADO</th>
-                                <th style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>ACCIONES</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {currentOrders.map(order => (
-                                <tr key={order.id} style={{ backgroundColor: '#f9f9f9', transition: 'background-color 0.3s' }}>
-                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>{order.id}</td>
-                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>{new Date(order.dateCreated).toLocaleDateString()}</td>
-                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
-                                        {order.products.map(product => (
-                                            <div key={product.id}>
-                                                {product.name} (x{product.quantity})
-                                            </div>
-                                        ))}
-                                    </td>
-                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
-                                        {order.address.street} {order.address.number}, {order.address.city}, {order.address.state}
-                                    </td>
-                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>${order.amount}</td>
-                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
-                                        <select 
-                                            value={order.status} 
-                                            onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                                            style={{ padding: '5px', borderRadius: '4px', border: '1px solid #ccc', textAlign: 'center' }}
-                                        >
-                                            <option value="CREATED">CREADO</option>
-                                            <option value="PAID">PAGADO</option>
-                                            <option value="FINISHED">FINALIZADO</option>
-                                        </select>
-                                    </td>
-                                    <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
-                                        <button 
-                                            onClick={() => updateOrderStatus(order.id)}
-                                            style={{ backgroundColor: '#198754', color: '#fff', border: 'none', borderRadius: '4px', padding: '8px 12px', cursor: 'pointer' }}
-                                        >
-                                            Actualizar Estado
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                ) : (
-                    <p style={{ textAlign: 'center', color: '#555' }}>No hay ordenes disponibles</p>
-                )}
-                {/* Paginación */}
-                <nav className="mt-4">
-                    <ul className="pagination justify-content-center">
-                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                            <button className="page-link" onClick={() => paginate(currentPage - 1)}>
-                                Anterior
-                            </button>
+  return (
+    <div className="container mt-5">
+      <h2 className="mb-4 text-center">Mis Pedidos</h2>
+      {orders.length === 0 ? (
+        <p className="text-center">No tienes ningún pedido.</p>
+      ) : (
+        <div className="row">
+          {orders.map((order) => (
+            <div key={order.id} className="col-12 col-md-6 col-lg-4 mb-4 d-flex">
+              <Card className="shadow-sm border-0 w-100" style={{ minHeight: '350px', display: 'flex', flexDirection: 'column' }}>
+                <Card.Header className="bg-primary text-white">
+                  Pedido #{order.id}
+                </Card.Header>
+                <Card.Body className="d-flex flex-column">
+                  <Card.Title className="text-success">Total: ${order.amount.toFixed(2)}</Card.Title>
+                  <Card.Subtitle className="mb-2 text-muted">
+                    Fecha: {new Date(order.dateCreated).toLocaleDateString()}
+                  </Card.Subtitle>
+                  <Card.Text>
+                    <strong>Dirección:</strong>{' '}
+                    {order.address ? (
+                      <>
+                        {order.address.street} {order.address.number}, {order.address.state}, {order.address.city}
+                      </>
+                    ) : (
+                      'Sin dirección'
+                    )}
+                  </Card.Text>
+                  <Card.Text>
+                    <strong>Productos:</strong>
+                    <ul className="ps-3">
+                      {order.products.map((product, index) => (
+                        <li key={index}>
+                          {product.name} (x{product.quantity})
                         </li>
-                        {[...Array(totalPages)].map((_, i) => (
-                            <li key={i + 1} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
-                                <button className="page-link" onClick={() => paginate(i + 1)}>
-                                    {i + 1}
-                                </button>
-                            </li>
-                        ))}
-                        <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                            <button className="page-link" onClick={() => paginate(currentPage + 1)}>
-                                Siguiente
-                            </button>
-                        </li>
+                      ))}
                     </ul>
-                </nav>
+                  </Card.Text>
+                  <Card.Text className="mt-auto">
+                    <strong>Estado:</strong> <span className="text">{getFriendlyStatus(order.status)}</span>
+                  </Card.Text>
+                  <div className="text-center mt-3">
+                    {order.comprobanteUrl ? (
+                      <Button variant="outline-primary" href={order.comprobanteUrl} target="_blank" rel="noopener noreferrer">
+                        Ver Comprobante
+                      </Button>
+                    ) : (
+                      <span className="text-muted">Comprobante no disponible</span>
+                    )}
+                  </div>
+                  {!order.comprobanteUrl && (
+                    <div className="mt-3 text-center">
+                      <input
+                        id={`fileInput-${order.id}`}
+                        type="file"
+                        onChange={(e) => handleFileChange(e, order.id)}
+                        className="form-control d-none"
+                      />
+                      {fileNames[order.id] && (
+                        <div className="mt-2">
+                          <strong>Archivo seleccionado:</strong> {fileNames[order.id]}
+                        </div>
+                      )}
+                      <label htmlFor={`fileInput-${order.id}`} className="btn btn-primary mt-2">
+                        <FaUpload className="me-2" /> Adjuntar comprobante
+                      </label>
+                      {files[order.id] && (
+                        <Button className="mt-2" onClick={() => handleFileUpload(order.id)} variant="success">
+                          Subir Comprobante
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </Card.Body>
+              </Card>
             </div>
+          ))}
         </div>
-    );
+      )}
+    </div>
+  );
 };
 
 export default OrderPage;

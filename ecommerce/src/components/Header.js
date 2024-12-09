@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useProducts } from '../context/productContext';
 import { useCart } from '../context/cartContext';
@@ -10,7 +10,7 @@ const Header = () => {
 
     const location = useLocation();
 
-    const { logout } = useAuth(); 
+    const { logout } = useAuth();
     const navigate = useNavigate();
     const { setSearchTerm, setFilteredProducts, products, searchTerm } = useProducts(); // Obtener funciones del contexto
     const { cart } = useCart();
@@ -27,33 +27,49 @@ const Header = () => {
         setFilteredProducts(filtered);
     };
 
+    const handleMyOrders = () => {
+        navigate('/orders');
+    }
+
+    const handleMyAccount = () => {
+        navigate('/my-account');
+    }
+
     const handleLogout = () => {
-      
-        logout();  
+
+        logout();
         navigate('/');
     };
 
     // Verificar si el usuario está logueado
     const isLoggedIn = !!localStorage.getItem('token'); // Devuelve true si hay token, false si no
     const userRole = localStorage.getItem('userRole'); // Devuelve el rol del usuario logeado
-
-    const totalItems = (cart || []).reduce((total, item) => total + item.quantity, 0);
+   
+    const totalItems =   (cart || []).reduce((total, item) => Number(item.quantity) +Number(total) , 0);
 
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-light mb-4 bg-light">
+        <nav className="navbar navbar-expand-lg navbar-light mb-4" style={{ backgroundColor: '#f8f9fa', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
             <div className="container-fluid">
                 <div className="row w-100">
                     <div className="col-12 col-md-6 col-lg-4 mx-auto d-flex justify-content-between align-items-center">
                         <a className="navbar-brand d-flex align-items-center" href="/">
-                            {/* Logo */}
+                     
                             <img
-                                src="logo-recortado.png"
-                                alt="Logo"
-                                style={{ width: '130px', height: '65px', marginRight: '10px', marginLeft: '10px' }}
+                                src="logo-recortado.png"  // Logo para pantallas grandes
+                                alt="Logo grande"
+                                className="d-none d-lg-block"  // Ocultar en pantallas pequeñas
+                                style={{ width: '130px', height: '65px' }}
                             />
-                        </a>
 
+                            <img
+                                src="project_20240920_1534178-02.png"  // Logo para pantallas pequeñas
+                                alt="Logo Pequeño"
+                                className="d-block d-lg-none"  // Mostrar en pantallas pequeñas
+                                style={{ width: '65px', height: '65px' }}
+                            />
+
+                        </a>
                         <button
                             className="navbar-toggler"
                             type="button"
@@ -65,33 +81,42 @@ const Header = () => {
                         >
                             <span className="navbar-toggler-icon"></span>
                         </button>
+
                     </div>
+
                     {location.pathname === '/' && (
                         <div className="col-12 col-md-6 col-lg-4 mx-auto d-flex align-items-center">
                             <div className="w-100">
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className="form-control rounded-pill border-0 shadow-sm"
                                     placeholder="Buscar productos..."
                                     value={searchTerm}
                                     onChange={handleSearch}
                                 />
+
                             </div>
                         </div>
                     )}
+
                     <div className="col-12 col-md-6 col-lg-4 ms-auto d-flex align-items-center">
+
                         <div className="collapse navbar-collapse" id="navbarNav">
                             <ul className="navbar-nav ms-auto">
-                                <li className="nav-item border-bottom"> {/* Línea divisora */}
-                                    <Link className="nav-link active" aria-current="page" to="/">Productos</Link>
+                                <li className="nav-item">
+                                    <Link className="nav-link active fw-bold" to="/">Inicio</Link>
                                 </li>
-                                {/* Mostrar el botón de ordenes solo si el usuario está logueado y es ADMIN */}
                                 {isLoggedIn && userRole === 'ADMIN' && (
-                                    <li className="nav-item border-bottom"> {/* Línea divisora */}
-                                        <Link className="nav-link active" aria-current="page" to="/orders">Ordenes</Link>
-                                    </li>
+                                    <>
+                                        <li className="nav-item">
+                                            <Link className="nav-link" to="/admin/orders">Órdenes</Link>
+                                        </li>
+                                        <li className="nav-item">
+                                            <Link className="nav-link" to="/admin/products">Productos</Link>
+                                        </li>
+                                    </>
                                 )}
-                                <li className="nav-item position-relative border-bottom">
+                                <li className="nav-item position-relative">
                                     <Link className="nav-link" to="/cart">
                                         {totalItems > 0 ? (
                                             <i className="bi bi-cart-fill"></i>
@@ -106,7 +131,7 @@ const Header = () => {
                                     </Link>
                                 </li>
 
-                                <li className="nav-item dropdown border-bottom"> {/* Línea divisora */}
+                                <li className="nav-item dropdown">
                                     <a
                                         className="nav-link dropdown-toggle"
                                         id="navbarDropdown"
@@ -119,14 +144,16 @@ const Header = () => {
                                     <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                         {isLoggedIn ? (
                                             <>
-                                             <li>
-                                                <button className="dropdown-item">Mi cuenta</button>
-                                            </li>
-                                             <li>
-                                                <button className="dropdown-item" onClick={handleLogout}>Cerrar sesión</button>
-                                            </li>
+                                                <li>
+                                                    <button className="dropdown-item" onClick={handleMyAccount}>Mis datos</button>
+                                                </li>
+                                                <li>
+                                                    <button className="dropdown-item" onClick={handleMyOrders}>Mis pedidos</button>
+                                                </li>
+                                                <li>
+                                                    <button className="dropdown-item" onClick={handleLogout}>Cerrar sesión</button>
+                                                </li>
                                             </>
-                        
                                         ) : (
                                             <>
                                                 <li>
