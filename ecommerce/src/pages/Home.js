@@ -20,16 +20,8 @@ const Home = () => {
  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
  return (
-    <div className="container custom-card-container mb-4">
-        {/* Barra de búsqueda 
-        <div className="search-bar mb-4 d-flex justify-content-center">
-            <input
-                type="text"
-                className="form-control w-50 rounded-pill shadow-sm"
-                placeholder="Buscar productos..."
-                onChange={(e) => onSearch(e.target.value)}
-            />
-        </div>*/}
+    <div className="container custom-card-container mb-4 mt-4">
+   
 
         {/* Listado de productos */}
         <div className="row">
