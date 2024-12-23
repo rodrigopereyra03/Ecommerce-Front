@@ -44,32 +44,34 @@ const Header = () => {
     // Verificar si el usuario está logueado
     const isLoggedIn = !!localStorage.getItem('token'); // Devuelve true si hay token, false si no
     const userRole = localStorage.getItem('userRole'); // Devuelve el rol del usuario logeado
-   
-    const totalItems =   (cart || []).reduce((total, item) => Number(item.quantity) +Number(total) , 0);
+
+    const totalItems = (cart || []).reduce((total, item) => Number(item.quantity) + Number(total), 0);
 
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-light mb-4" style={{ backgroundColor: '#f8f9fa', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
+        <>
+        <nav className="navbar navbar-expand-lg navbar-light" style={{ backgroundColor: '#f8f9fa', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
             <div className="container-fluid">
                 <div className="row w-100">
                     <div className="col-12 col-md-6 col-lg-4 mx-auto d-flex justify-content-between align-items-center">
                         <a className="navbar-brand d-flex align-items-center" href="/">
-                     
+
                             <img
-                                src="logo-recortado.png"  // Logo para pantallas grandes
+                                src="logo_nuevo_recortado_2.png"  // Logo para pantallas grandes
                                 alt="Logo grande"
-                                className="d-none d-lg-block"  // Ocultar en pantallas pequeñas
-                                style={{ width: '130px', height: '65px' }}
+                                className="d-none d-lg-block "  // Ocultar en pantallas pequeñas
+                                style={{ width: '155px', height: '80px' }}
                             />
 
                             <img
-                                src="project_20240920_1534178-02.png"  // Logo para pantallas pequeñas
+                                src="logo_nuevo_recortado_2.png"  // Logo para pantallas pequeñas
                                 alt="Logo Pequeño"
                                 className="d-block d-lg-none"  // Mostrar en pantallas pequeñas
-                                style={{ width: '65px', height: '65px' }}
+                                style={{ width: '125px', height: '55px' }}
                             />
 
                         </a>
+
                         <button
                             className="navbar-toggler"
                             type="button"
@@ -82,10 +84,12 @@ const Header = () => {
                             <span className="navbar-toggler-icon"></span>
                         </button>
 
+
+
                     </div>
 
                     {location.pathname === '/' && (
-                        <div className="col-12 col-md-6 col-lg-4 mx-auto d-flex align-items-center">
+                        <div className="d-none d-lg-flex mx-autocol-12 col-md-6 col-lg-4 mx-auto d-flex align-items-center mb">
                             <div className="w-100">
                                 <input
                                     type="text"
@@ -94,6 +98,8 @@ const Header = () => {
                                     value={searchTerm}
                                     onChange={handleSearch}
                                 />
+
+
 
                             </div>
                         </div>
@@ -105,6 +111,18 @@ const Header = () => {
                             <ul className="navbar-nav ms-auto">
                                 <li className="nav-item">
                                     <Link className="nav-link active fw-bold" to="/">Inicio</Link>
+                                </li>
+
+                                <li className="nav-item">
+                                    <a
+                                        href="https://wa.me/5491123456789"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="nav-link"
+                                        style={{ whiteSpace: 'nowrap' }}
+                                    >
+                                        Contáctanos
+                                    </a>
                                 </li>
                                 {isLoggedIn && userRole === 'ADMIN' && (
                                     <>
@@ -168,10 +186,26 @@ const Header = () => {
                                 </li>
                             </ul>
                         </div>
+
                     </div>
                 </div>
             </div>
         </nav>
+        <div className="bg-light py-3 d-lg-none my-2 w-100" style={{ boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
+        <div className="container d-lg-none my-2 w-100">
+            <form className="d-flex">
+                <input
+                    type="text"
+                    className="form-control rounded-pill shadow-sm"
+                    placeholder="Buscar productos..."
+                    value={searchTerm}
+                    onChange={handleSearch}
+
+                />
+            </form>
+        </div>
+    </div>
+        </>
     );
 };
 

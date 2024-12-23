@@ -303,7 +303,7 @@ const CartPage = () => {
                     <h1 className="my-4 text-center">Carrito</h1>
 
                     {cart.length === 0 ? (
-                        <p className="text-center">No hay productos en tu carrito.</p>
+                        <p className="text-center">No tenes productos en tu carrito.</p>
                     ) : (
                         <div className="row justify-content-center">
                             <div className="col-12 col-md-8 col-lg-6">
@@ -381,6 +381,18 @@ const CartPage = () => {
                                 </div>
                             ))}
 
+                            <p className="text-center my-3 mt-4">
+                                Antes de continuar,{" "}
+                                <a
+                                    href="https://wa.me/5491165170107"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-primary">
+                                    contactanos por WhatsApp
+                                </a>{" "}
+                                para validar el envío y conocer sus costos.
+                            </p>
+
                             {/* Línea divisora */}
                             <hr className="my-4" />
 
@@ -403,6 +415,7 @@ const CartPage = () => {
 
 
                             <div className="d-flex justify-content-between mt-4">
+
                                 <button type="submit" className="btn btn-primary">
                                     Continuar al pago
                                 </button>
@@ -416,6 +429,7 @@ const CartPage = () => {
                             </div>
                         </div>
                     </form>
+
                 </div>
             )}
             {step === 3 && (
