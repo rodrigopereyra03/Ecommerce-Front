@@ -56,20 +56,21 @@ const Header = () => {
                         <a className="navbar-brand d-flex align-items-center" href="/">
                      
                             <img
-                                src="logo-recortado.png"  // Logo para pantallas grandes
+                                src="logo_nuevo_recortado_2.png"  // Logo para pantallas grandes
                                 alt="Logo grande"
-                                className="d-none d-lg-block"  // Ocultar en pantallas pequeñas
-                                style={{ width: '130px', height: '65px' }}
+                                className="d-none d-lg-block "  // Ocultar en pantallas pequeñas
+                                style={{ width: '155px', height: '80px' }}
                             />
 
                             <img
-                                src="project_20240920_1534178-02.png"  // Logo para pantallas pequeñas
+                                src="logo_nuevo_recortado_2.png"  // Logo para pantallas pequeñas
                                 alt="Logo Pequeño"
                                 className="d-block d-lg-none"  // Mostrar en pantallas pequeñas
-                                style={{ width: '65px', height: '65px' }}
+                                style={{ width: '125px', height: '55px' }}
                             />
 
                         </a>
+
                         <button
                             className="navbar-toggler"
                             type="button"
@@ -82,10 +83,12 @@ const Header = () => {
                             <span className="navbar-toggler-icon"></span>
                         </button>
 
+
+
                     </div>
 
                     {location.pathname === '/' && (
-                        <div className="col-12 col-md-6 col-lg-4 mx-auto d-flex align-items-center">
+                        <div className="col-12 col-md-6 col-lg-4 mx-auto d-flex align-items-center mb">
                             <div className="w-100">
                                 <input
                                     type="text"
@@ -94,6 +97,8 @@ const Header = () => {
                                     value={searchTerm}
                                     onChange={handleSearch}
                                 />
+
+                                
 
                             </div>
                         </div>
@@ -105,6 +110,18 @@ const Header = () => {
                             <ul className="navbar-nav ms-auto">
                                 <li className="nav-item">
                                     <Link className="nav-link active fw-bold" to="/">Inicio</Link>
+                                </li>
+
+                                <li  className="nav-item">
+                                <a
+                    href="https://wa.me/5491123456789"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="nav-link"
+                    style={{ whiteSpace: 'nowrap' }}
+                >
+                    Contáctanos
+                </a>
                                 </li>
                                 {isLoggedIn && userRole === 'ADMIN' && (
                                     <>
@@ -168,6 +185,7 @@ const Header = () => {
                                 </li>
                             </ul>
                         </div>
+                    
                     </div>
                 </div>
             </div>

@@ -14,14 +14,14 @@ const Footer = () => {
                 <br />
                 <br />*/}
                 <div className="social-icons">
-                    <a href="https://facebook.com" className="social-icon text-muted m-1" target="_blank" rel="noopener noreferrer">
+                   { /*<a href="https://facebook.com" className="social-icon text-muted m-1" target="_blank" rel="noopener noreferrer">
                         <i className="bi bi-facebook"></i>
                     </a>
                     <a href="https://instagram.com" className="social-icon text-muted m-1" target="_blank" rel="noopener noreferrer">
                         <i className="bi bi-instagram"></i>
-                    </a>
+                    </a>*/}
                     <a href={`https://wa.me/${whatsappNumber}`} className="social-icon text-muted m-1" target="_blank" rel="noopener noreferrer">
-                        <i className="bi bi-whatsapp"></i>
+                       ¡Hablemos! <i className="bi bi-whatsapp"></i> 
                     </a>
                 </div>
             </div>
