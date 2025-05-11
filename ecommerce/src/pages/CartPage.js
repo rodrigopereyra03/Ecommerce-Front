@@ -410,7 +410,7 @@ const CartPage = () => {
                                 </label>
                             </div>
                             <p className="text-muted mt-2">
-                                Dirección de retiro: Av. Alsina 1960, Lomas de Zamora, Bs As.
+                                Dirección de retiro: San Juan 1760, CABA.
                             </p>
 
 
