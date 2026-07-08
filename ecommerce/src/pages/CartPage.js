@@ -486,16 +486,16 @@ const CartPage = () => {
 
                                 <ul className="list-group list-group-flush">
                                     <li className="list-group-item">
-                                        <strong>Alias:</strong> tomas.tomas.tomas
+                                        <strong>Alias:</strong> -
                                     </li>
                                     <li className="list-group-item">
-                                        <strong>CBU:</strong> 43587969493745897
+                                        <strong>CBU:</strong> -
                                     </li>
                                     <li className="list-group-item">
-                                        <strong>Titular:</strong> Tomas Agustin Pereyra
+                                        <strong>Titular:</strong> -
                                     </li>
                                     <li className="list-group-item">
-                                        <strong>Banco:</strong> BBVA
+                                        <strong>Banco:</strong> -
                                     </li>
                                 </ul>
 
